@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="googletest-distribution"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake-build-debug\;CMake Files\cmake-build-debug\external\;CMake Files\cmake-build-debug\external\googletest-src\;CMake Files\cmake-build-debug\external\googletest-src\googlemock\;CMake Files\cmake-build-debug\external\googletest-src\googlemock\cmake\;CMake Files\cmake-build-debug\external\googletest-src\googletest\;CMake Files\cmake-build-debug\external\googletest-src\googletest\cmake\;CMake Files\external\;CMake Files\examples\;CMake Files\tests\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgmockd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock/fast">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgmockd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgmock_maind.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock_main"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main/fast">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgmock_maind.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock_main/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgtest_maind.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest_main"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main/fast">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgtest_maind.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest_main/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgtestd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest/fast">
+				<Option output="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/lib/libgtestd.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/include"/>
+					<Add directory="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/src/gmock-all.cc">
+			<Option target="gmock"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/src/gmock_main.cc">
+			<Option target="gmock_main"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/src/gtest-all.cc">
+			<Option target="gtest"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/src/gtest_main.cc">
+			<Option target="gtest_main"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/cmake/gmock.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googlemock/cmake/gmock_main.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/cmake/Config.cmake.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/cmake/gtest.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/cmake/gtest_main.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/external/googletest-src/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\external\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/external/CMakeLists.txt.in">
+			<Option virtualFolder="CMake Files\external\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

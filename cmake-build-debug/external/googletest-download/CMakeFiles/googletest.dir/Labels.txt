@@ -1,0 +1,14 @@
+# Target labels
+ googletest
+# Source files and their labels
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/CMakeFiles/googletest
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/CMakeFiles/googletest.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/CMakeFiles/googletest-complete.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-install.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-mkdir.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-download.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-update.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-patch.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-configure.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-build.rule
+/Users/thanasis/CLionProjects/cs591_templatedb/cmake-build-debug/external/googletest-download/googletest-prefix/src/googletest-stamp/googletest-test.rule

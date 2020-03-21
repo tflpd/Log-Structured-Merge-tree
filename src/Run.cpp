@@ -48,8 +48,11 @@ void FileMetaData::addFences(vector<Tuple> tuples){
 }
 
 void FileMetaData::addBloomFilters(vector<Tuple> tuples, int BF_num_elements, int BF_bits_per_element) {
-    assert(tuples.size() >= BF_num_elements && tuples.size()%BF_num_elements == 0);
-    for (int i = 0; i < tuples.size()/BF_num_elements; ++i) {
+    //assert(tuples.size() >= BF_num_elements && tuples.size()%BF_num_elements == 0);
+
+    auto *tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
+    _bloom_filters.push_back(tmpBF);
+    for (int i = 1; i < tuples.size()/BF_num_elements; ++i) {
         auto *tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
         _bloom_filters.push_back(tmpBF);
     }
@@ -95,8 +98,8 @@ Buffer* Run::Fetch() {
 
 bool Run::AddNewFMD(const vector<Tuple>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it
-    if (_files.size() == _fp_per_run)
-        return false;
+//    if (_files.size() == _fp_per_run)
+//        return false;
     FILE *fp = nullptr;
     auto *tmpFMD = new FileMetaData(fp, tuples);
     _files.push_back(tmpFMD);
@@ -111,7 +114,7 @@ vector<Tuple> Run::GetALlTuples() {
 
     vector<Tuple> result;
     result.reserve(size);
-
+    // TODO: Maybe there is a better way to copy everything in results?
     for (auto & _file : _files) {
         result.insert(result.end(), _file->GetAllTuples().begin(), _file->GetAllTuples().end());
     }

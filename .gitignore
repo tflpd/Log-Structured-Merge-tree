@@ -37,5 +37,4 @@ build
 # Workspace settings
 .vscode
 .idea
-
 cmake-build-debug

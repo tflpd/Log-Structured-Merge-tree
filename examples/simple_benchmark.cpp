@@ -2,8 +2,8 @@
 #include <chrono>
 
 #include "clipp.h"
-#include "include/Database.hpp"
-#include "include/Operation.hpp"
+#include "Database.hpp"
+#include "Operation.hpp"
 
 typedef struct _configuration
 {

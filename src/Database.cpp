@@ -1,4 +1,4 @@
-#include "include/Database.hpp"
+#include "Database.hpp"
 
 using namespace templatedb;
 

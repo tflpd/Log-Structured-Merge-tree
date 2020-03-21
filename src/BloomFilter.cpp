@@ -1,5 +1,5 @@
-#include "include/BloomFilter.h"
-#include "include/Murmurhash.h"
+#include "BloomFilter.h"
+#include "Murmurhash.h"
 
 using namespace std;
 using namespace BF;
@@ -64,4 +64,8 @@ int BloomFilter::getIndexNum(){
 
 int BloomFilter::getSize(){
 	return size;
+}
+
+int BloomFilter::getNumElement() {
+    return numElement;
 }

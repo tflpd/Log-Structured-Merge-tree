@@ -1,4 +1,4 @@
-#include "include/Murmurhash.h"
+#include "Murmurhash.h"
 
 unsigned int MurmurHash2 ( const void * key, int len, unsigned int seed )
 {

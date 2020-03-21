@@ -17,7 +17,7 @@
 //     bool Get(Buffer* other); // move data from other buffer to this buffer
 // };
 
-#include "./include/Buffer.h"
+#include "Buffer.h"
 
 Buffer::Buffer(int size) {
 
@@ -28,19 +28,19 @@ Buffer::~Buffer() {
 }
 
 bool Buffer::Append(int key, int val) {
-
+	return true;
 }
 
 bool Buffer::IsFull() const {
-
+	return true;
 }
 
 bool Buffer::Clear() {
-
+	return true;
 }
 
 bool Buffer::Get(Buffer* other) {
-
+	return true;
 }
 
 

@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "include/Database.hpp"
+#include "Database.hpp"
 
 
 class DBTest : public ::testing::Test

@@ -1,8 +1,11 @@
 #include <assert.h>
-#include "./include/LSM_T.h"
-#include "./include/Buffer.h"
-#include "./include/Tuple.h"
-#include "./include/Level.h"
+#include "LSM_T.h"
+#include "Buffer.h"
+#include "Tuple.h"
+#include "Level.h"
+#ifdef __linux__
+#include <bits/stdc++.h>
+#endif
 
 #define DEL_PLACEHOLDER INT_MIN
 #define AUX_MULTIPLIER 8

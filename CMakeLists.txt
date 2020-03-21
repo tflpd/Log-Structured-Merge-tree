@@ -1,24 +1,31 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 project(templatedb VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 11)
 
 set(templatedb_lib
         src/Database.cpp
         src/Operation.cpp
-        src/BloomFilter.cpp
-        src/Murmurhash.cpp
         src/Buffer.cpp
-        src/Fence_Ptr.cpp
         src/Level.cpp
         src/LSM_T.cpp
         src/Run.cpp
         src/Tuple.cpp
-)
+        src/FencePointer.cpp)
 
-add_library(${PROJECT_NAME} ${templatedb_lib})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
+
+set(bloomfilter_lib
+	src/BloomFilter.cpp
+	src/Murmurhash.cpp)
+
+
+add_library(templatedb ${templatedb_lib})
+target_include_directories(templatedb PUBLIC ${PROJECT_SOURCE_DIR}/src)
+
+add_library(BF ${bloomfilter_lib})
+target_include_directories(BF PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 include_directories(external)
+include_directories(include)
 
 configure_file(external/CMakeLists.txt.in external/googletest-download/CMakeLists.txt)
 execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .

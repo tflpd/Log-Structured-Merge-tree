@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 
-#include "include/BloomFilter.h"
+#include "BloomFilter.h"
 
 using namespace BF;
 

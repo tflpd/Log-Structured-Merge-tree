@@ -551,7 +551,13 @@
 		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Database.cpp">
 			<Option target="templatedb"/>
 		</Unit>
-		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Fence_Ptr.cpp">
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePointerF.cpp">
+			<Option target="templatedb"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePointerF.h">
+			<Option target="templatedb"/>
+		</Unit>
+		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePtrL.cpp">
 			<Option target="templatedb"/>
 		</Unit>
 		<Unit filename="/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/LSM_T.cpp">

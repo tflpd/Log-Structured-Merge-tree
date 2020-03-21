@@ -365,32 +365,59 @@ src/Database.cpp.s:
 	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/Database.cpp.s
 .PHONY : src/Database.cpp.s
 
-src/Fence_Ptr.o: src/Fence_Ptr.cpp.o
+src/FencePointerF.o: src/FencePointerF.cpp.o
 
-.PHONY : src/Fence_Ptr.o
+.PHONY : src/FencePointerF.o
 
 # target to build an object file
-src/Fence_Ptr.cpp.o:
-	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o
-.PHONY : src/Fence_Ptr.cpp.o
+src/FencePointerF.cpp.o:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o
+.PHONY : src/FencePointerF.cpp.o
 
-src/Fence_Ptr.i: src/Fence_Ptr.cpp.i
+src/FencePointerF.i: src/FencePointerF.cpp.i
 
-.PHONY : src/Fence_Ptr.i
+.PHONY : src/FencePointerF.i
 
 # target to preprocess a source file
-src/Fence_Ptr.cpp.i:
-	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.i
-.PHONY : src/Fence_Ptr.cpp.i
+src/FencePointerF.cpp.i:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePointerF.cpp.i
+.PHONY : src/FencePointerF.cpp.i
 
-src/Fence_Ptr.s: src/Fence_Ptr.cpp.s
+src/FencePointerF.s: src/FencePointerF.cpp.s
 
-.PHONY : src/Fence_Ptr.s
+.PHONY : src/FencePointerF.s
 
 # target to generate assembly for a file
-src/Fence_Ptr.cpp.s:
-	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.s
-.PHONY : src/Fence_Ptr.cpp.s
+src/FencePointerF.cpp.s:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePointerF.cpp.s
+.PHONY : src/FencePointerF.cpp.s
+
+src/FencePtrL.o: src/FencePtrL.cpp.o
+
+.PHONY : src/FencePtrL.o
+
+# target to build an object file
+src/FencePtrL.cpp.o:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o
+.PHONY : src/FencePtrL.cpp.o
+
+src/FencePtrL.i: src/FencePtrL.cpp.i
+
+.PHONY : src/FencePtrL.i
+
+# target to preprocess a source file
+src/FencePtrL.cpp.i:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePtrL.cpp.i
+.PHONY : src/FencePtrL.cpp.i
+
+src/FencePtrL.s: src/FencePtrL.cpp.s
+
+.PHONY : src/FencePtrL.s
+
+# target to generate assembly for a file
+src/FencePtrL.cpp.s:
+	$(MAKE) -f CMakeFiles/templatedb.dir/build.make CMakeFiles/templatedb.dir/src/FencePtrL.cpp.s
+.PHONY : src/FencePtrL.cpp.s
 
 src/LSM_T.o: src/LSM_T.cpp.o
 
@@ -585,9 +612,12 @@ help:
 	@echo "... src/Database.o"
 	@echo "... src/Database.i"
 	@echo "... src/Database.s"
-	@echo "... src/Fence_Ptr.o"
-	@echo "... src/Fence_Ptr.i"
-	@echo "... src/Fence_Ptr.s"
+	@echo "... src/FencePointerF.o"
+	@echo "... src/FencePointerF.i"
+	@echo "... src/FencePointerF.s"
+	@echo "... src/FencePtrL.o"
+	@echo "... src/FencePtrL.i"
+	@echo "... src/FencePtrL.s"
 	@echo "... src/LSM_T.o"
 	@echo "... src/LSM_T.i"
 	@echo "... src/LSM_T.s"

@@ -8,12 +8,11 @@ set(templatedb_lib
         src/BloomFilter.cpp
         src/Murmurhash.cpp
         src/Buffer.cpp
-        src/Fence_Ptr.cpp
         src/Level.cpp
         src/LSM_T.cpp
         src/Run.cpp
         src/Tuple.cpp
-)
+        src/FencePointer.cpp include/FencePointer.h)
 
 add_library(${PROJECT_NAME} ${templatedb_lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)

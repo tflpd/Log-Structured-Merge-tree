@@ -18,6 +18,7 @@ public:
 
 	int getIndexNum();
 	int getSize();
+	int getNumElement();
 private:
 	int numIndex;
 	int size;

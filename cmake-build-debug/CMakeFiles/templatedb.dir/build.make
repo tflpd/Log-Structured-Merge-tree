@@ -122,18 +122,18 @@ CMakeFiles/templatedb.dir/src/Buffer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/templatedb.dir/src/Buffer.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Buffer.cpp -o CMakeFiles/templatedb.dir/src/Buffer.cpp.s
 
-CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o: CMakeFiles/templatedb.dir/flags.make
-CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o: ../src/Fence_Ptr.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o -c /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Fence_Ptr.cpp
+CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o: CMakeFiles/templatedb.dir/flags.make
+CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o: ../src/FencePtrL.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o -c /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePtrL.cpp
 
-CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Fence_Ptr.cpp > CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.i
+CMakeFiles/templatedb.dir/src/FencePtrL.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/templatedb.dir/src/FencePtrL.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePtrL.cpp > CMakeFiles/templatedb.dir/src/FencePtrL.cpp.i
 
-CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Fence_Ptr.cpp -o CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.s
+CMakeFiles/templatedb.dir/src/FencePtrL.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/templatedb.dir/src/FencePtrL.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePtrL.cpp -o CMakeFiles/templatedb.dir/src/FencePtrL.cpp.s
 
 CMakeFiles/templatedb.dir/src/Level.cpp.o: CMakeFiles/templatedb.dir/flags.make
 CMakeFiles/templatedb.dir/src/Level.cpp.o: ../src/Level.cpp
@@ -187,6 +187,19 @@ CMakeFiles/templatedb.dir/src/Tuple.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/templatedb.dir/src/Tuple.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/Tuple.cpp -o CMakeFiles/templatedb.dir/src/Tuple.cpp.s
 
+CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o: CMakeFiles/templatedb.dir/flags.make
+CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o: ../src/FencePointerF.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o -c /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePointerF.cpp
+
+CMakeFiles/templatedb.dir/src/FencePointerF.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/templatedb.dir/src/FencePointerF.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePointerF.cpp > CMakeFiles/templatedb.dir/src/FencePointerF.cpp.i
+
+CMakeFiles/templatedb.dir/src/FencePointerF.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/templatedb.dir/src/FencePointerF.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thanasis/CLionProjects/Log-Structured-Merge-tree/src/FencePointerF.cpp -o CMakeFiles/templatedb.dir/src/FencePointerF.cpp.s
+
 # Object files for target templatedb
 templatedb_OBJECTS = \
 "CMakeFiles/templatedb.dir/src/Database.cpp.o" \
@@ -194,11 +207,12 @@ templatedb_OBJECTS = \
 "CMakeFiles/templatedb.dir/src/BloomFilter.cpp.o" \
 "CMakeFiles/templatedb.dir/src/Murmurhash.cpp.o" \
 "CMakeFiles/templatedb.dir/src/Buffer.cpp.o" \
-"CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o" \
+"CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o" \
 "CMakeFiles/templatedb.dir/src/Level.cpp.o" \
 "CMakeFiles/templatedb.dir/src/LSM_T.cpp.o" \
 "CMakeFiles/templatedb.dir/src/Run.cpp.o" \
-"CMakeFiles/templatedb.dir/src/Tuple.cpp.o"
+"CMakeFiles/templatedb.dir/src/Tuple.cpp.o" \
+"CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o"
 
 # External object files for target templatedb
 templatedb_EXTERNAL_OBJECTS =
@@ -208,14 +222,15 @@ libtemplatedb.a: CMakeFiles/templatedb.dir/src/Operation.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/BloomFilter.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/Murmurhash.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/Buffer.cpp.o
-libtemplatedb.a: CMakeFiles/templatedb.dir/src/Fence_Ptr.cpp.o
+libtemplatedb.a: CMakeFiles/templatedb.dir/src/FencePtrL.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/Level.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/LSM_T.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/Run.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/src/Tuple.cpp.o
+libtemplatedb.a: CMakeFiles/templatedb.dir/src/FencePointerF.cpp.o
 libtemplatedb.a: CMakeFiles/templatedb.dir/build.make
 libtemplatedb.a: CMakeFiles/templatedb.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library libtemplatedb.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/thanasis/CLionProjects/Log-Structured-Merge-tree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX static library libtemplatedb.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/templatedb.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/templatedb.dir/link.txt --verbose=$(VERBOSE)
 

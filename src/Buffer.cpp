@@ -17,7 +17,7 @@
 //     bool Get(Buffer* other); // move data from other buffer to this buffer
 // };
 
-#include "./include/Buffer.h"
+#include "../include/Buffer.h"
 
 Buffer::Buffer(int size) {
 

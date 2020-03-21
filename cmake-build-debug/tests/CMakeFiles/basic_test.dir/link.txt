@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++  -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/basic_test.dir/basic_test.cpp.o CMakeFiles/basic_test.dir/Main.cpp.o  -o basic_test ../libtemplatedb.a ../lib/libgtestd.a 

@@ -3,7 +3,9 @@
 #include "Buffer.h"
 #include "Tuple.h"
 #include "Level.h"
+#ifdef __linux__
 #include <bits/stdc++.h>
+#endif
 
 #define DEL_PLACEHOLDER INT_MIN
 #define AUX_MULTIPLIER 8

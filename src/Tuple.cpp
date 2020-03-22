@@ -2,7 +2,7 @@
 // Created by Athanasios Filippidis on 2/25/20.
 //
 
-#include "../include/Tuple.h"
+#include "Tuple.h"
 
 #include <utility>
 

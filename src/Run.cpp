@@ -1,4 +1,4 @@
-#include "../include/Run.h"
+#include "Run.h"
 
 FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple>& tuples):
         _file_pointer(File_pointer) {
@@ -82,7 +82,7 @@ Run::~Run() {
 }
 
 bool Run::Flush(Buffer* buf) {
-
+    return true;
 }
 
 /* Collecting all binary data for this Run on disk
@@ -93,6 +93,8 @@ Buffer* Run::Fetch() {
 
 
     }
+
+    return nullptr;
 
 }
 

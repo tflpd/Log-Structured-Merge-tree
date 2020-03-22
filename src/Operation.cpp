@@ -1,4 +1,4 @@
-#include "../include/Operation.hpp"
+#include "Operation.hpp"
 
 using namespace templatedb;
 

@@ -1,5 +1,4 @@
-add_executable(basic_test basic_test.cpp Main.cpp)
-
+add_executable(basic_test basic_test.cpp)
 add_executable(persistence_test persistence_test.cpp)
 
 target_link_libraries(basic_test PUBLIC templatedb gtest)

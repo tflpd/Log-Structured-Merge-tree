@@ -2,7 +2,7 @@
 // Created by Athanasios Filippidis on 3/21/20.
 //
 
-#include "../include/FencePointer.h"
+#include "FencePointer.h"
 
 FencePointer::FencePointer(int Interval_size): _interval_size(Interval_size){
 }

@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "include/Database.hpp"
+#include "Database.hpp"
 
 TEST(PersistenceTest, BasicOpenClose)
 {

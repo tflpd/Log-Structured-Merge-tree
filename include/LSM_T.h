@@ -15,10 +15,10 @@ public:
     LSM_T(uint SST_size, uint a, uint runs);
     ~LSM_T();
 
-    Tuple* Search(int key);
-    Tuple* Search(int start, int end);
-    bool Insert(int key, int val);
-    bool Delete(int key);
+    Tuple* Search(std::string key);
+    Tuple* Search(std::string start, std::string end);
+    bool Insert(std::string key, Value val);
+    bool Delete(std::string key);
 
 private:
     std::list<Level> _levels;
@@ -30,4 +30,5 @@ private:
     uint _runs;
 };
 
+#include "LSM_T.cpp"
 #endif

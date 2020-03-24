@@ -8,8 +8,8 @@
 
 using namespace std;
 
-Tuple::Tuple(std::string Key, templatedb::Value Value):
-    _key(std::move(Key)), _value(std::move(Value)){
+Tuple::Tuple(std::string key, Value val):
+    _key(std::move(key)), _value(std::move(val)){
 }
 
 Tuple::~Tuple() {}

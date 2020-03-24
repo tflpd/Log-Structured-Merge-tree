@@ -18,7 +18,7 @@ LSM_T::LSM_T(uint SST_size, uint a, uint runs):
     _auxiliary_buf = new Buffer(AUX_MULTIPLIER * _a * _sst_size);
 }
 
-bool LSM_T::Insert(int key, int val) {
+bool LSM_T::Insert(std::string key, Value val) {
     _buf->Append(key, val);
 
     if (_buf->IsFull()) {
@@ -50,7 +50,7 @@ bool LSM_T::Insert(int key, int val) {
     return true;
 }
 
-bool LSM_T::Delete(int key) {
+bool LSM_T::Delete(std::string key) {
     auto ret = Search(key);
     if (ret == nullptr) {
         // may need to release ret before exit
@@ -62,12 +62,12 @@ bool LSM_T::Delete(int key) {
 }
 
 
-Tuple* LSM_T::Search(int key) {
+Tuple* LSM_T::Search(std::string key) {
 
     return nullptr;
 }
 
-Tuple* LSM_T::Search(int start, int end) {
+Tuple* LSM_T::Search(std::string start, std::string end) {
 
     return nullptr;
 }

@@ -10,6 +10,8 @@
 #include <vector>
 
 #include "Operation.hpp"
+#include "LSM_T.h"
+#include "Tuple.h"
 
 namespace templatedb
 {
@@ -22,30 +24,13 @@ typedef enum _status_code
 } db_status;
 
 
-class Value
-{
-public:
-    std::vector<int> items;
-    bool visible = true;
-
-    Value() {}
-    Value(bool _visible) {visible = _visible;}
-    Value(std::vector<int> _items) { items = _items;}
-
-    bool operator ==(Value const & other) const
-    {
-        return (visible == other.visible) && (items == other.items);
-    }
-};
-
-
 class DB
 {
 public:
     db_status status;
 
-    DB() {};
-    ~DB() {close();};
+    DB() { table = new LSM_T(64, 1, 3); };
+    ~DB() { delete table; };
 
     Value get(int key);
     void put(int key, Value val);
@@ -57,16 +42,17 @@ public:
     db_status open(std::string & fname);
     bool close();
 
-    bool load_data_file(std::string & fname);
+    // bool load_data_file(std::string & fname);
 
     std::vector<Value> execute_op(Operation op);
 
 private:
     std::fstream file;
-    std::unordered_map<int, Value> table;
+    // std::unordered_map<int, Value> table;
+    LSM_T* table = nullptr;
     size_t value_dimensions = 0;
     
-    bool write_to_file();
+    // bool write_to_file();
 };
 
 }   // namespace templatedb

@@ -6,12 +6,13 @@
 #define LSM_TREE_BUFFER_H
 
 #include "Tuple.h"
+#include "vector"
 
 #define SIZE 10
 
 class Buffer{
 private:
-    Tuple *tuples;
+    std::vector<Tuple> tuples;
 public:
     Buffer(int size);
     ~Buffer();
@@ -19,8 +20,9 @@ public:
     bool Clear();
     bool Get(Buffer* other); // move data from other buffer to this buffer
 
-    bool Append(int key, int val);
+    bool Append(std::string key,  val);
     bool IsFull() const;
 };
 
+#include "Buffer.cpp"
 #endif //LSM_TREE_BUFFER_H

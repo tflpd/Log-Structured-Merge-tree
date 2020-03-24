@@ -8,27 +8,44 @@
 #include <iostream>
 #include "Database.hpp"
 
+class Value
+{
+public:
+    std::vector<int> items;
+    bool visible = true;
+
+    Value() {}
+    Value(bool _visible) {visible = _visible;}
+    Value(std::vector<int> _items) { items = _items;}
+
+    bool operator ==(Value const & other) const
+    {
+        return (visible == other.visible) && (items == other.items);
+    }
+};
+
+
 class Tuple{
 private:
     std::string _key;
-    templatedb::Value _value;
+    Value _value;
 public:
-    Tuple(std::string key, templatedb::Value Value);
+    Tuple(std::string key, Value val);
     ~Tuple();
 //    inline void SetKey(const std::string key){
 //        this->_key = key;
 //    }
-    inline void SetValue(const templatedb::Value Value){
-        this->_value = Value;
+    inline void SetValue(Value val){
+        this->_value = val;
     }
     inline std::string GetKey(){
         return _key;
     }
-    inline templatedb::Value GetValue(){
+    inline Value GetValue(){
         return _value;
     }
     void PrintTuple();
 };
 
-
+#include "Tuple.cpp"
 #endif //LSM_TREE_TUPLE_H

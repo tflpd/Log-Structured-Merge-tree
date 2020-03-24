@@ -8,7 +8,6 @@
 #include "FencePointer.h"
 #include "Buffer.h"
 #include "BloomFilter.h"
-#include "Database.hpp"
 #include <vector>
 
 struct FileMetaData
@@ -38,15 +37,6 @@ private:
     void addBloomFilters(vector<Tuple> tuples, int BF_num_elements, int BF_bits_per_element);
 };
 
-
-
-
-
-
-
-
-
-
 class Run {
 public:
     Run(uint fps);
@@ -68,4 +58,5 @@ private:
     int _fp_per_run;
 };
 
+#include "Run.cpp"
 #endif

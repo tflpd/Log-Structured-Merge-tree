@@ -10,7 +10,7 @@ set(templatedb_lib
         src/LSM_T.cpp
         src/Run.cpp
         src/Tuple.cpp
-        src/FencePointer.cpp)
+        src/FencePointer.cpp include/Parameters.h)
 
 
 set(bloomfilter_lib

@@ -71,8 +71,27 @@ vector<Tuple> FileMetaData::GetAllTuples() {
 }
 
 
-Run::Run(uint fps): _fp_per_run(fps) {
 
+// Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
+Run::Run(uint fps, const vector<Tuple>& tuples, int level_id, int run_id, Parameters par): _files_per_run(fps) {
+    uint files_to_be_created = tuples.size() * par.getTupleByteSize() / par.getSstSize();
+    uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
+    if (tuples.size() * par.getTupleByteSize() % par.getSstSize())
+        files_to_be_created++;
+
+    for (int i = 0; i < files_to_be_created; ++i) {
+        // Taking the pointers that will be used to create the subvector which will be needed to
+        // be passed as a parameter for the creatio of the file
+        // TODO: Possibly this can get optimized
+        auto first = tuples.begin() + i*tuples_per_file;
+        auto last = tuples.begin() + (i + 1)*tuples_per_file;
+        if ((i + 1)*tuples_per_file > tuples.size())
+            last = tuples.begin() + tuples.size() - i*tuples_per_file;
+        vector<Tuple> newTmpVec(first, last);
+
+        if (!AddNewFMD(newTmpVec, level_id, run_id))
+            exit(-1);
+    }
 }
 
 Run::~Run() {
@@ -81,25 +100,30 @@ Run::~Run() {
     }
 }
 
-bool Run::Flush(Buffer* buf) {
-    return true;
-}
-
-/* Collecting all binary data for this Run on disk
- * and re-org them in struct of Buffer */
-Buffer* Run::Fetch() {
-    for (auto& block : _files) {
-
-
-
-    }
-
-    return nullptr;
-
-}
+//bool Run::Flush(Buffer* buf) {
+//    return true;
+//}
+//
+///* Collecting all binary data for this Run on disk
+// * and re-org them in struct of Buffer */
+//Buffer* Run::Fetch() {
+//    for (auto& block : _files) {
+//
+//
+//
+//    }
+//
+//    return nullptr;
+//
+//}
 
 bool Run::AddNewFMD(const vector<Tuple>& tuples, int level_id, int run_id) {
-    // TODO: Create SST file here and open it
+    // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
+    //  Let's use a naming convention for the files like level3run5file2.sst and let's start \
+    //  the counting from zero so the first level where the buffer gets dumped next time will be level0 \
+    // and the next time we create a new level this will be level1 so the lower level will be level 0 and the highest \
+    // will be the n-th
+
 //    if (_files.size() == _fp_per_run)
 //        return false;
     FILE *fp = nullptr;

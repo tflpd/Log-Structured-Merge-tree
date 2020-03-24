@@ -9,6 +9,7 @@
 #include "Buffer.h"
 #include "BloomFilter.h"
 #include "Database.hpp"
+#include "Parameters.h"
 #include <vector>
 
 struct FileMetaData
@@ -49,12 +50,12 @@ private:
 
 class Run {
 public:
-    Run(uint fps);
+    Run(uint fps, const vector<Tuple>& tuples, int level_id, int run_id, Parameters par);
     ~Run(); // release resources held by FileMetaData?
 
-    bool Flush(Buffer* buf);
-    // bool Fetch() const;
-    Buffer* Fetch();
+//    bool Flush(Buffer* buf);
+//    // bool Fetch() const;
+//    Buffer* Fetch();
 
     // Adds/creates a new file and the respective FileMetaData struct of this file.
     // This file will consist of the tuples "tuples". The two id's passed will be used for the file creation/naming
@@ -65,7 +66,7 @@ public:
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array
-    int _fp_per_run;
+    int _files_per_run;
 };
 
 #endif

@@ -29,7 +29,8 @@ private:
     uint _id;
     uint _max_runs; // maximum runs allowed before merging
     // uint _run_cnt; // current runs got
-    uint _fp_per_run;
+    // uint _fp_per_run; // This is not necessary since we keep in the Parameters struct the tuple size and the sst size.
+    // More specifically this can be calculated as files_per_run = buffer_tuples_size * _max_runs_level0 * (level + 2 - 1) / _sst_size
     std::vector<Run> _runs;
 
     Run* _placeholder = nullptr;

@@ -23,11 +23,40 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple>& tuples, int 
 
     // TODO: Write the values in the SST file
 
+    // Add a fence pointer every FP_offset_interval (default value) keys
+    addFences(tuples);
+
+    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
+    addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
+}
+
+bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple> &tuples) {
+    _num_tuples = tuples.size();
+    _fence_pointerf = new FencePointer(500);
+
+    // TODO: Write the values in the SST file using the already existing file pointer
+
     // Add a fence pointer every 500 (default value) keys
     addFences(tuples);
 
-    // Add Bloom Filters of size 1024 (default value) for the keys of the tuples
+    // Add Bloom Filters of size 1024 and precision of 10 (bit) (default values) for the keys of the tuples
+    addBloomFilters(tuples, 1024, 10);
+    return true;
+}
+
+bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple> &tuples, int FP_offset_interval, int BF_num_elements,
+                                             int BF_bits_per_element) {
+    _num_tuples = tuples.size();
+    _fence_pointerf = new FencePointer(FP_offset_interval);
+
+    // TODO: Write the values in the SST file using the already existing file pointer
+
+    // Add a fence pointer every FP_offset_interval (default value) keys
+    addFences(tuples);
+
+    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
     addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
+    return true;
 }
 
 // TODO: Check what resources need to be de allocated
@@ -70,13 +99,34 @@ vector<Tuple> FileMetaData::GetAllTuples() {
     return vector<Tuple>();
 }
 
+FILE *FileMetaData::getFilePointer() const {
+    return _file_pointer;
+}
+
+int FileMetaData::getNumTuples() const {
+    return _num_tuples;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
-Run::Run(uint fps, const vector<Tuple>& tuples, int level_id, int run_id, Parameters par): _files_per_run(fps) {
-    uint files_to_be_created = tuples.size() * par.getTupleByteSize() / par.getSstSize();
+Run::Run(uint files_per_run, const vector<Tuple>& tuples, int Level_id, int Run_id, const Parameters& par):
+        _files_per_run(files_per_run), _level_id(Level_id), _run_id(Run_id) {
+    _num_tuples = tuples.size();
+    uint files_to_be_created = _num_tuples * par.getTupleByteSize() / par.getSstSize();
     uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
-    if (tuples.size() * par.getTupleByteSize() % par.getSstSize())
+    if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
         files_to_be_created++;
 
     for (int i = 0; i < files_to_be_created; ++i) {
@@ -85,11 +135,11 @@ Run::Run(uint fps, const vector<Tuple>& tuples, int level_id, int run_id, Parame
         // TODO: Possibly this can get optimized
         auto first = tuples.begin() + i*tuples_per_file;
         auto last = tuples.begin() + (i + 1)*tuples_per_file;
-        if ((i + 1)*tuples_per_file > tuples.size())
-            last = tuples.begin() + tuples.size() - i*tuples_per_file;
+        if ((i + 1)*tuples_per_file > _num_tuples)
+            last = tuples.begin() + _num_tuples - i*tuples_per_file;
         vector<Tuple> newTmpVec(first, last);
 
-        if (!AddNewFMD(newTmpVec, level_id, run_id))
+        if (!AddNewFMD(newTmpVec, _level_id, _run_id))
             exit(-1);
     }
 }
@@ -120,13 +170,14 @@ Run::~Run() {
 bool Run::AddNewFMD(const vector<Tuple>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
     //  Let's use a naming convention for the files like level3run5file2.sst and let's start \
-    //  the counting from zero so the first level where the buffer gets dumped next time will be level0 \
+    //  the counting from zero so the first level where the buffer gets dumped the first time next time will be level0 \
     // and the next time we create a new level this will be level1 so the lower level will be level 0 and the highest \
-    // will be the n-th
+    // will be the n-th. Also when we merge some runs of a level let's reuse the same files. Deleting them and creating new
+    // ones will probably lead to unnecessary overhead
 
 //    if (_files.size() == _fp_per_run)
 //        return false;
-    FILE *fp = nullptr;
+    FILE *fp = nullptr; // open fp here please
     auto *tmpFMD = new FileMetaData(fp, tuples);
     _files.push_back(tmpFMD);
     return true;
@@ -146,6 +197,30 @@ vector<Tuple> Run::GetALlTuples() {
     }
     return result;
 }
+
+// A very complex thought to avoid recreating files when we merge some runs in a single run let's not thinks about it yet
+//bool Run::ModifyFMDsComponents(uint files_per_run, const vector<Tuple> &tuples, const Parameters &par) {
+//    _num_tuples = tuples.size();
+//    uint existing_file_num = _num_tuples * par.getTupleByteSize() / par.getSstSize();
+//    uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
+//    if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
+//        existing_file_num++;
+//
+//    for (int i = 0; i < existing_file_num; ++i) {
+//        // Taking the pointers that will be used to create the subvector which will be needed to
+//        // be passed as a parameter for the creatio of the file
+//        // TODO: Possibly this can get optimized
+//        auto first = tuples.begin() + i*tuples_per_file;
+//        auto last = tuples.begin() + (i + 1)*tuples_per_file;
+//        if ((i + 1)*tuples_per_file > _num_tuples)
+//            last = tuples.begin() + _num_tuples - i*tuples_per_file;
+//        vector<Tuple> newTmpVec(first, last);
+//
+//        if (!_files.at(i)->ModifyComponentsPostMerge(newTmpVec))
+//            exit(-1);
+//    }
+//    return true;
+//}
 
 
 // struct FileMetaData

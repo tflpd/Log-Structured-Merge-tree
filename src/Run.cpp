@@ -150,22 +150,22 @@ Run::~Run() {
     }
 }
 
-//bool Run::Flush(Buffer* buf) {
-//    return true;
-//}
-//
-///* Collecting all binary data for this Run on disk
-// * and re-org them in struct of Buffer */
-//Buffer* Run::Fetch() {
-//    for (auto& block : _files) {
-//
-//
-//
-//    }
-//
-//    return nullptr;
-//
-//}
+bool Run::Flush(Buffer* buf) {
+    return true;
+}
+
+/* Collecting all binary data for this Run on disk
+ * and re-org them in struct of Buffer */
+Buffer* Run::Fetch() {
+    for (auto& block : _files) {
+
+
+
+    }
+
+    return nullptr;
+
+}
 
 bool Run::AddNewFMD(const vector<Tuple>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \

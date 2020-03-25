@@ -33,7 +33,7 @@ private:
     uint _sst_size;
     uint _a; // buffer size = _a * _sst_size;
     uint _max_merge_runs; // maximum runs allowed in a level before merging
-    uint _max_runs_level0; // maximum runs in level zero - recursively every next level will have double the amount of the previous
+    uint _tuples_level0; // maximum tuples in level zero - recursively every next level will have double the amount of the previous
     uint _fence_pointers_intervals;
     uint _BF_num_elements;
     uint _BF_precision; // expressed in bits per element

@@ -62,9 +62,9 @@ public:
     Run(uint files_per_run, const vector<Tuple>& tuples, int level_id, int run_id, const Parameters& par);
     ~Run(); // release resources held by FileMetaData?
 
-//    bool Flush(Buffer* buf);
-//    // bool Fetch() const;
-//    Buffer* Fetch();
+    bool Flush(Buffer* buf);
+    // bool Fetch() const;
+    Buffer* Fetch();
 
     // Adds/creates a new file and the respective FileMetaData struct of this file.
     // This file will consist of the tuples "tuples". The two id's passed will be used for the file creation/naming

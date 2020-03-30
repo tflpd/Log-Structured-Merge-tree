@@ -11,27 +11,32 @@
 
 class Level {
 public:
-    Level(uint id, uint runs);
+    Level(uint level_id, const Parameters& par);
     ~Level();
 
-    bool Merge(Buffer* auxiliary_buffer);
+    /// Takes the provided tuples, sorts them, creates a new run with them and adds that run to the level
+    bool AddNewRun(vector<Tuple*> tuples);
     // Run* Merge(Run* merged_run);
-    bool AppendRun(Buffer* auxiliary_buffer);
+    //bool AppendRun(Buffer* auxiliary_buffer);
     // bool AppendRun(Run* merged_run);
 
-    bool ReadyMerge() const;
+    //bool ReadyMerge() const;
 
 private:
     bool _Clear();
-    Buffer* _Sort(std::vector<Buffer*>& buf_vec);
+    // Sorts the provided vector of tuples
+    void _Sort(vector<Tuple*> *tuples);
+    /// To be used internally only when after the new run that is to be added there should be a merging
+    bool _AddMergeRuns(vector<Tuple*> tuples);
 
 private:
     uint _id;
-    uint _max_runs; // maximum runs allowed before merging
-    // uint _run_cnt; // current runs got
-    uint _fp_per_run; // This is not necessary since we keep in the Parameters struct the tuple size and the sst size.
-    // More specifically this can be calculated as files_per_run = buffer_tuples_size * _max_runs_level0 * (level + 1) / _sst_size
+    //uint _max_runs; // maximum runs allowed before merging
+    uint _curr_tuples_n; // amount of tuples currently on this level
+    uint _files_per_run; // This is not necessary since we keep in the Parameters struct the tuple size and the sst size.
+    // More specifically this can be calculated as files_per_run = level0_max_tuples * pow(size_ratio, level_id) / _sst_size
     std::vector<Run> _runs;
+    Parameters _par;
 
     Run* _placeholder = nullptr;
 };

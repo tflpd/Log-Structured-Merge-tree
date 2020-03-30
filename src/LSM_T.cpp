@@ -29,10 +29,10 @@ bool LSM_T::Insert(int key, int val) {
         for (auto it = _levels.begin(); it != _levels.end() && push_down; it++) {
 
             if (it->ReadyMerge())
-                it->Merge(_auxiliary_buf);
+                it->_AddMergeRuns(_auxiliary_buf);
             else {
                 push_down = false;
-                it->AppendRun(_auxiliary_buf); // create a new Run
+                it->AddNewRun(_auxiliary_buf->GetTuples()); // create a new Run
             }
 
         }
@@ -40,10 +40,10 @@ bool LSM_T::Insert(int key, int val) {
         // touch the bottom of levels, create a new Level
         if (push_down) {
             auto cnt = _levels.size();
-            _levels.emplace_back(++cnt, _runs);
+            //_levels.emplace_back(++cnt, _runs);
 
             auto bottom = _levels.back();
-            bottom.AppendRun(_auxiliary_buf);
+            bottom.AddNewRun(_auxiliary_buf->GetTuples());
         }
     }
 

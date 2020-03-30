@@ -43,5 +43,9 @@ bool Buffer::Get(Buffer* other) {
 	return true;
 }
 
+std::vector<Tuple> Buffer::GetTuples() {
+    return tupless;
+}
+
 
 

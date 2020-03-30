@@ -12,12 +12,14 @@
 class Buffer{
 private:
     Tuple *tuples;
+    std::vector<Tuple> tupless;
 public:
     Buffer(int size);
     ~Buffer();
 
     bool Clear();
     bool Get(Buffer* other); // move data from other buffer to this buffer
+    std::vector<Tuple> GetTuples();
 
     bool Append(int key, int val);
     bool IsFull() const;

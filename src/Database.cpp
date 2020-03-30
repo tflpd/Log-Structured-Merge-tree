@@ -5,39 +5,33 @@ using namespace templatedb;
 
 Value DB::get(int key)
 {
-    if (table.count(key))
-        return table[key];
-    
-    return Value(false);
+    Value ret;
+    return ret;
 }
 
 
 void DB::put(int key, Value val)
 {
-    table[key] = val;
+    table->Insert(to_string(key), val);
 }
 
 
-std::vector<Value> DB::scan()
-{
-    std::vector<Value> return_vector;
-    for (auto pair: table)
-    {
-        return_vector.push_back(pair.second);
-    }
-
-    return return_vector;
-}
+//std::vector<Value> DB::scan()
+//{
+//    std::vector<Value> return_vector;
+//    for (auto pair: table)
+//    {
+//        return_vector.push_back(pair.second);
+//    }
+//
+//    return return_vector;
+//}
 
 
 std::vector<Value> DB::scan(int min_key, int max_key)
 {
     std::vector<Value> return_vector;
-    for (auto pair: table)
-    {
-        if ((pair.first >= min_key) && (pair.first <= max_key))
-            return_vector.push_back(pair.second);
-    }
+//    auto tuples = table->Search(min_key, max_key);
 
     return return_vector;
 }
@@ -45,13 +39,7 @@ std::vector<Value> DB::scan(int min_key, int max_key)
 
 void DB::del(int key)
 {
-    table.erase(key);
-}
-
-
-size_t DB::size()
-{
-    return table.size();
+//    table->Delete(key);
 }
 
 

@@ -8,6 +8,7 @@
 #include "FencePointer.h"
 #include "Buffer.h"
 #include "BloomFilter.h"
+#include "Tuple.h"
 #include <vector>
 
 struct FileMetaData

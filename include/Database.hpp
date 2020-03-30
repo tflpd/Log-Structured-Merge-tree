@@ -34,7 +34,7 @@ public:
 
     Value get(int key);
     void put(int key, Value val);
-    std::vector<Value> scan();
+//    std::vector<Value> scan();
     std::vector<Value> scan(int min_key, int max_key);
     void del(int key);
     size_t size();

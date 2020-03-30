@@ -20,7 +20,7 @@ public:
     bool Clear();
     bool Get(Buffer* other); // move data from other buffer to this buffer
 
-    bool Append(std::string key,  val);
+    bool Append(std::string key, Value val);
     bool IsFull() const;
 };
 

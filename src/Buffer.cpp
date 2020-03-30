@@ -27,7 +27,7 @@ Buffer::~Buffer() {
 
 }
 
-bool Buffer::Append(int key, int val) {
+bool Buffer::Append(std::string key, Value val) {
 	return true;
 }
 

@@ -17,3 +17,19 @@ Tuple::~Tuple() {}
 void Tuple::PrintTuple() {
     //cout << "Key: " << _key << " Value: " << _value << endl;
 }
+
+std::string Tuple::ToString() const{
+    string ret;
+    ret += _key;
+    ret += "|";
+
+    ret += "{";
+    for (auto& item: _value.items) {
+        ret += std::to_string(item);
+        ret += ",";
+    }
+	if (ret.back() != '{') ret.pop_back();
+	ret += "}";
+
+	return ret;
+}

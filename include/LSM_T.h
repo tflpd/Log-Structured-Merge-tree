@@ -20,6 +20,8 @@ public:
     bool Insert(std::string key, Value val);
     bool Delete(std::string key);
 
+    void ShowMemBuffer() const;
+
 private:
     std::list<Level> _levels;
     Buffer* _buf = nullptr;
@@ -30,5 +32,5 @@ private:
     uint _runs;
 };
 
-#include "LSM_T.cpp"
+// #include "LSM_T.cpp"
 #endif

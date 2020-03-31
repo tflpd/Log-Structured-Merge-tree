@@ -34,13 +34,15 @@ public:
 
     Value get(int key);
     void put(int key, Value val);
-//    std::vector<Value> scan();
+   std::vector<Value> scan();
     std::vector<Value> scan(int min_key, int max_key);
     void del(int key);
-    size_t size();
 
-    db_status open(std::string & fname);
-    bool close();
+    void show_buf() const;
+    // size_t size();
+
+    // db_status open(std::string & fname);
+    // bool close();
 
     // bool load_data_file(std::string & fname);
 

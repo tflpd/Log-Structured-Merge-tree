@@ -6,13 +6,12 @@
 #define LSM_TREE_BUFFER_H
 
 #include "Tuple.h"
-#include "vector"
-
-#define SIZE 10
+#include <vector>
 
 class Buffer{
 private:
     std::vector<Tuple> tuples;
+    int _max_cap;
 public:
     Buffer(int size);
     ~Buffer();
@@ -22,7 +21,9 @@ public:
 
     bool Append(std::string key, Value val);
     bool IsFull() const;
+
+    void print() const;
 };
 
-#include "Buffer.cpp"
+// #include "Buffer.cpp"
 #endif //LSM_TREE_BUFFER_H

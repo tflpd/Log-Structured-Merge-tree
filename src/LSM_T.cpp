@@ -62,6 +62,11 @@ bool LSM_T::Delete(std::string key) {
 }
 
 
+void LSM_T::ShowMemBuffer() const {
+    _buf->print();
+}
+
+
 Tuple* LSM_T::Search(std::string key) {
 
     return nullptr;

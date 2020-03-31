@@ -6,7 +6,8 @@
 #define LSM_TREE_TUPLE_H
 
 #include <iostream>
-#include "Database.hpp"
+#include <vector>
+// #include "Database.hpp"
 
 class Value
 {
@@ -44,8 +45,10 @@ public:
     inline Value GetValue(){
         return _value;
     }
+    std::string ToString() const;
+        
     void PrintTuple();
 };
 
-#include "Tuple.cpp"
+// #include "Tuple.cpp"
 #endif //LSM_TREE_TUPLE_H

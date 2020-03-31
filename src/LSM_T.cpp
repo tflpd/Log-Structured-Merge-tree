@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <utility>
 #include "LSM_T.h"
 #include "Buffer.h"
 #include "Tuple.h"
@@ -15,24 +16,23 @@ LSM_T::LSM_T(uint SST_size, uint a, uint runs):
 
     assert(runs > 1 && a > 0);
     _buf = new Buffer(_a * _sst_size);
-    _auxiliary_buf = new Buffer(AUX_MULTIPLIER * _a * _sst_size);
+    //_auxiliary_buf = new Buffer(AUX_MULTIPLIER * _a * _sst_size);
 }
 
 bool LSM_T::Insert(std::string key, Value val) {
     _buf->Append(key, val);
 
     if (_buf->IsFull()) {
-
+        auto tuples = _buf->GetTuples();
         bool push_down = true;
-        _auxiliary_buf->Get(_buf); // move data at _buf to _auxiliary_buf
 
         for (auto it = _levels.begin(); it != _levels.end() && push_down; it++) {
 
             if (it->ReadyMerge())
-                it->Merge(_auxiliary_buf);
+                it->_AddMergeRuns(tuples);
             else {
                 push_down = false;
-                it->AppendRun(_auxiliary_buf); // create a new Run
+                it->AddNewRun(*tuples); // create a new Run
             }
 
         }
@@ -40,10 +40,11 @@ bool LSM_T::Insert(std::string key, Value val) {
         // touch the bottom of levels, create a new Level
         if (push_down) {
             auto cnt = _levels.size();
-            _levels.emplace_back(++cnt, _runs);
+            // TODO: Probably this should be uncommented to actually create the new level
+            //_levels.emplace_back(++cnt, _runs);
 
             auto bottom = _levels.back();
-            bottom.AppendRun(_auxiliary_buf);
+            bottom.AddNewRun(*tuples);
         }
     }
 

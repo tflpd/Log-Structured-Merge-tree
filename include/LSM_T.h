@@ -9,6 +9,7 @@
 #include "Level.h"
 #include "Buffer.h"
 #include <list>
+#include "Database.hpp"
 
 class LSM_T {
 public:
@@ -26,7 +27,7 @@ private:
     std::list<Level> _levels;
     Buffer* _buf = nullptr;
     /* used for saving temporary data obtained after each merge, reducing one disk IO */
-    Buffer* _auxiliary_buf = nullptr;
+    //Buffer* _auxiliary_buf = nullptr;
     uint _sst_size;
     uint _a; // buf size = _a * _sst_size;
     uint _runs;

@@ -10,14 +10,15 @@
 
 class Buffer{
 private:
-    std::vector<Tuple> tuples;
+    std::vector<Tuple*> *tuples;
     int _max_cap;
 public:
     Buffer(int size);
     ~Buffer();
 
     bool Clear();
-    bool Get(Buffer* other); // move data from other buffer to this buffer
+    //bool Get(Buffer* other); // move data from other buffer to this buffer
+    std::vector<Tuple*> *GetTuples();
 
     bool Append(std::string key, Value val);
     bool IsFull() const;

@@ -65,7 +65,7 @@ private:
     uint _a; // buffer size = _a * _sst_size;
     uint _buffer_tuples_size; // how many tuples does the buffer can fit
     /// Level related parameters. Also we can take the derivative of some those for a more fine granularity
-    uint _max_merge_runs; // maximum runs allowed in a level before merging
+    uint _max_merge_runs; // maximum runs allowed in a level before merging - this should be either one for leveling or equal to max level capacity for tiering
     uint _tuples_level0; // maximum tuples in level zero - recursively every next level will have _size_ratio the amount of the previous
     uint _size_ratio; // So for example level one runs will be equal to size ratio * level0_runs or equally level one tuples will be equal to size ratio * level0_tuples
     /// Fence pointers related parameters

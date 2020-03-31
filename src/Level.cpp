@@ -16,19 +16,21 @@ Level::~Level() {
 
 }
 
-//bool Level::ReadyMerge() const {
-//    return _max_runs == _runs.size() + 1;
-//}
+bool Level::ReadyMerge() const {
+    return _par.getMaxMergeRuns() == _runs.size() + 1;
+}
 
 /* the data to be pushed down is able to fit into memory */
-// Takes tuples, sorts them and then merges all the runs of this level in one run (adding the provided tuples)
-bool Level::_AddMergeRuns(vector<Tuple*> tuples) {
-    std::vector<Tuple*> accumulative_tuples;
+// Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
+bool Level::_AddMergeRuns(vector<Tuple*> *tuples) {
+    //std::vector<Tuple*> accumulative_tuples;
     uint final_run_size = 0;
     for (auto& run : _runs)
         final_run_size += run.GetAllTuples().size();
-    final_run_size += tuples.size();
-    accumulative_tuples.reserve(final_run_size);
+    final_run_size += tuples->size();
+    tuples->reserve(final_run_size);
+    // TODO: maybe change here the curr tuples counter
+    //accumulative_tuples.reserve(final_run_size);
 
     // TODO: maybe in the future just pop the min first element of every run -> more optimal
     // Number of tuples on the resulting run
@@ -48,13 +50,14 @@ bool Level::_AddMergeRuns(vector<Tuple*> tuples) {
 
     // Add all tuples of this level in a vector
     for (auto& run : _runs) {
-        accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
+        tuples->insert(tuples->end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
+        //accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
     }
     // and the ones provided as an argument
-    accumulative_tuples.insert(accumulative_tuples.end(), tuples.begin(), tuples.end());
+    //accumulative_tuples.insert(accumulative_tuples.end(), tuples.begin(), tuples.end());
 
     // Merge-sort them
-    _Sort(&accumulative_tuples);
+    //_Sort(&accumulative_tuples);
 
     // TODO: Delete all existing runs and their sst files here
 //    for (auto p_buf : buf_vec)
@@ -163,13 +166,13 @@ void Level::_Sort(vector<Tuple*> *tuples) {
 
 bool Level::AddNewRun(vector<Tuple*> tuples) {
     _curr_tuples_n += tuples.size();
-    if (_runs.size() == _par.getMaxMergeRuns()){
-        _AddMergeRuns(tuples);
-    }else{
-        _Sort(&tuples);
-        _runs.emplace_back(_files_per_run, tuples, _id, _runs.size(), _par);
-    }
-    // TODO: Check here whether this level is now full and should get dumped below
+//    if (_runs.size() == _par.getMaxMergeRuns()){
+//        _AddMergeRuns(tuples);
+//    }else{
+//
+//    }
+    _Sort(&tuples);
+    _runs.emplace_back(_files_per_run, tuples, _id, _runs.size(), _par);
     return true;
 }
 

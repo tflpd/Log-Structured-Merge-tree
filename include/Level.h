@@ -16,18 +16,18 @@ public:
 
     /// Takes the provided tuples, sorts them, creates a new run with them and adds that run to the level
     bool AddNewRun(vector<Tuple*> tuples);
+    /// Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
+    bool _AddMergeRuns(vector<Tuple*> *tuples);
     // Run* Merge(Run* merged_run);
     //bool AppendRun(Buffer* auxiliary_buffer);
     // bool AppendRun(Run* merged_run);
 
-    //bool ReadyMerge() const;
+    bool ReadyMerge() const;
 
 private:
     bool _Clear();
     // Sorts the provided vector of tuples
     void _Sort(vector<Tuple*> *tuples);
-    /// To be used internally only when after the new run that is to be added there should be a merging
-    bool _AddMergeRuns(vector<Tuple*> tuples);
 
 private:
     uint _id;

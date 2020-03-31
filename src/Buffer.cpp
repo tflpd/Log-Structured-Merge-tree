@@ -27,7 +27,7 @@ Buffer::~Buffer() {
 
 }
 
-bool Buffer::Append(int key, int val) {
+bool Buffer::Append(std::string key, templatedb::Value val) {
 	return true;
 }
 
@@ -39,12 +39,12 @@ bool Buffer::Clear() {
 	return true;
 }
 
-bool Buffer::Get(Buffer* other) {
-	return true;
-}
+//bool Buffer::Get(Buffer* other) {
+//	return true;
+//}
 
-std::vector<Tuple> Buffer::GetTuples() {
-    return tupless;
+std::vector<Tuple*> *Buffer::GetTuples() {
+    return tuples;
 }
 
 

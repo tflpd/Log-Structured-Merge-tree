@@ -9,7 +9,6 @@
 #include "Level.h"
 #include "Buffer.h"
 #include <list>
-#include "Database.hpp"
 
 class LSM_T {
 public:

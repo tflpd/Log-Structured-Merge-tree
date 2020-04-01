@@ -10,7 +10,8 @@
 class Parameters {
 public:
 
-    Parameters(uint tupleByteSize, uint sstSize, uint a) : _tuple_byte_size(tupleByteSize), _sst_size(sstSize), _a(a) {}
+    Parameters(uint tupleByteSize, uint sstSize, uint a, uint maxMergeRuns) : 
+        _tuple_byte_size(tupleByteSize), _sst_size(sstSize), _a(a), _max_merge_runs(maxMergeRuns){}
 
     virtual ~Parameters() {
 

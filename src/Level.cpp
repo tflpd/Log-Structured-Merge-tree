@@ -22,13 +22,13 @@ bool Level::ReadyMerge() const {
 
 /* the data to be pushed down is able to fit into memory */
 // Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
-bool Level::_AddMergeRuns(vector<Tuple*> *tuples) {
+bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
     //std::vector<Tuple*> accumulative_tuples;
     uint final_run_size = 0;
     for (auto& run : _runs)
         final_run_size += run.GetAllTuples().size();
-    final_run_size += tuples->size();
-    tuples->reserve(final_run_size);
+    final_run_size += tuples.size();
+    tuples.reserve(final_run_size);
     // TODO: maybe change here the curr tuples counter
     //accumulative_tuples.reserve(final_run_size);
 
@@ -50,7 +50,7 @@ bool Level::_AddMergeRuns(vector<Tuple*> *tuples) {
 
     // Add all tuples of this level in a vector
     for (auto& run : _runs) {
-        tuples->insert(tuples->end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
+        tuples.insert(tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
         //accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
     }
     // and the ones provided as an argument
@@ -85,7 +85,7 @@ bool Level::_Clear() {
 // Merges two subarrays of tuples[].
 // First subarray is tuples[left..mid]
 // Second subarray is tuples[mid+1..right]
-void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, unsigned long right)
+void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, unsigned long right)
 {
     unsigned long i, j, k;
     unsigned long n1 = mid - left + 1;
@@ -99,9 +99,9 @@ void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, u
 
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++)
-        L[i] = (*tuples)[left + i];
+        L[i] = (tuples)[left + i];
     for (j = 0; j < n2; j++)
-        R[j] = (*tuples)[mid + 1 + j];
+        R[j] = (tuples)[mid + 1 + j];
 
     /* Merge the temp arrays back into tuples[left..right]*/
     i = 0; // Initial index of first subarray
@@ -111,12 +111,12 @@ void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, u
     {
         if (stoi(L[i]->GetKey()) <= stoi(R[j]->GetKey()))
         {
-            (*tuples)[k] = L[i];
+            (tuples)[k] = L[i];
             i++;
         }
         else
         {
-            (*tuples)[k] = R[j];
+            (tuples)[k] = R[j];
             j++;
         }
         k++;
@@ -126,7 +126,7 @@ void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, u
        are any */
     while (i < n1)
     {
-        (*tuples)[k] = L[i];
+        (tuples)[k] = L[i];
         i++;
         k++;
     }
@@ -135,7 +135,7 @@ void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, u
        are any */
     while (j < n2)
     {
-        (*tuples)[k] = R[j];
+        (tuples)[k] = R[j];
         j++;
         k++;
     }
@@ -143,7 +143,7 @@ void merge(std::vector<Tuple*> *tuples, unsigned long left, unsigned long mid, u
 
 /* left is for left index and right is right index of the
    sub-array of arr to be sorted */
-void mergeSort(std::vector<Tuple*> *arr, unsigned long left, unsigned long right)
+void mergeSort(std::vector<Tuple*>& arr, unsigned long left, unsigned long right)
 {
     if (left < right)
     {
@@ -159,19 +159,19 @@ void mergeSort(std::vector<Tuple*> *arr, unsigned long left, unsigned long right
     }
 }
 
-void Level::_Sort(vector<Tuple*> *tuples) {
-    mergeSort(tuples, 0, tuples->size() - 1);
+void Level::_Sort(vector<Tuple*>& tuples) {
+    mergeSort(tuples, 0, tuples.size() - 1);
 }
 
 
-bool Level::AddNewRun(vector<Tuple*> tuples) {
+bool Level::AddNewRun(vector<Tuple*>& tuples) {
     _curr_tuples_n += tuples.size();
 //    if (_runs.size() == _par.getMaxMergeRuns()){
 //        _AddMergeRuns(tuples);
 //    }else{
 //
 //    }
-    _Sort(&tuples);
+    _Sort(tuples);
     _runs.emplace_back(_files_per_run, tuples, _id, _runs.size(), _par);
     return true;
 }

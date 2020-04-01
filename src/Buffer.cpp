@@ -13,16 +13,18 @@ Buffer::~Buffer() {
 bool Buffer::Append(std::string key, Value val) {
 	// concurrent access may lead to tuple oversized
 	// however, I think no special handling is needed 
-	// as it doesn't hurt data integrity 
-	if (tuples->size() >= _max_cap) return false;
+	// as it doesn't hurt data integrity
+	if (tuples.size() >= _max_cap) return false;
 	
 	Tuple* t = new Tuple(key, val);
-	tuples->push_back(t);
+
+	tuples.push_back(t);
 	return true;
 }
 
 bool Buffer::IsFull() const {
-	return true;
+	if (tuples.size() == _max_cap) return true;
+	return false;
 }
 
 bool Buffer::Clear() {
@@ -31,14 +33,14 @@ bool Buffer::Clear() {
 
 void Buffer::print() const {
 	std::string output;
-	for (auto& tuple : *tuples) {
+	for (auto& tuple : tuples) {
 		output += tuple->ToString();
 		output += " ";
 	}
 	KEY_LOG(output);
 }
 
-std::vector<Tuple*> *Buffer::GetTuples() {
+std::vector<Tuple*> Buffer::GetTuples() {
     return tuples;
 }
 

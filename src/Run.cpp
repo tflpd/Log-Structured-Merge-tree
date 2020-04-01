@@ -1,6 +1,6 @@
 #include "Run.h"
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples):
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
         _file_pointer(File_pointer) {
 
     _num_tuples = tuples.size();
@@ -15,7 +15,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples):
     addBloomFilters(tuples, 1024, 10);
 }
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, int FP_offset_interval, int BF_num_elements, int BF_bits_per_element):
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, int BF_bits_per_element):
         _file_pointer(File_pointer) {
 
     _num_tuples = tuples.size();
@@ -30,7 +30,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, int
     addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
 }
 
-bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*>& tuples) {
+bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples) {
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(500);
 
@@ -44,7 +44,7 @@ bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*>& tuples) {
     return true;
 }
 
-bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*>& tuples, int FP_offset_interval, int BF_num_elements,
+bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
                                              int BF_bits_per_element) {
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(FP_offset_interval);
@@ -69,14 +69,14 @@ FileMetaData::~FileMetaData() {
 //}
 
 
-void FileMetaData::addFences(vector<Tuple*> tuples){
+void FileMetaData::addFences(const vector<Tuple*> tuples){
     for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
         _fence_pointerf->AddFence(tuples.at(i)->GetKey());
     }
     _fence_pointerf->AddFence(tuples.at(tuples.size() - 1)->GetKey());
 }
 
-void FileMetaData::addBloomFilters(vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element) {
+void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element) {
     //assert(tuples.size() >= BF_num_elements && tuples.size()%BF_num_elements == 0);
 
     auto *tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
@@ -110,7 +110,7 @@ int FileMetaData::getNumTuples() const {
 
 
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
-Run::Run(uint files_per_run, vector<Tuple*> tuples, int Level_id, int Run_id, const Parameters& par):
+Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, const Parameters par):
         _files_per_run(files_per_run), _level_id(Level_id), _run_id(Run_id) {
     _num_tuples = tuples.size();
     uint files_to_be_created = _num_tuples * par.getTupleByteSize() / par.getSstSize();
@@ -156,7 +156,7 @@ Run::~Run() {
 //
 //}
 
-bool Run::AddNewFMD(vector<Tuple*> tuples, int level_id, int run_id) {
+bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
     //  Let's use a naming convention for the files like level3run5file2.sst and let's start \
     //  the counting from zero so the first level where the buffer gets dumped the first time next time will be level0 \

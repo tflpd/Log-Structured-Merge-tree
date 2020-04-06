@@ -1,6 +1,19 @@
 #include "Database.hpp"
+#include "Args.h"
 
 using namespace templatedb;
+
+DB::DB() {
+    auto sstSize = getSSTSize();
+    auto tupleSize = getTupleSize(); // only 1 key, at most 10 values
+    auto a = getA();
+    auto runs = getMaxRuns();
+    table = new LSM_T(sstSize, tupleSize, a, runs);
+}
+
+DB::~DB() {
+    delete table;
+}
 
 
 Value DB::get(int key)

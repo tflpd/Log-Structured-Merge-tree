@@ -1,4 +1,10 @@
 #include "Run.h"
+#include "Log.h"
+#include "Args.h"
+#include <fstream>
+#include <stdio.h>
+// #include <fcntl.h>
+// #include <unistd.h>
 
 FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
         _file_pointer(File_pointer) {
@@ -7,6 +13,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
     _fence_pointerf = new FencePointer(500);
 
     // TODO: Write the values in the SST file and delete them from memory
+
 
     // Add a fence pointer every 500 (default value) keys
     addFences(tuples);
@@ -21,13 +28,27 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(FP_offset_interval);
 
-    // TODO: Write the values in the SST file and delete them from memory
+    int tupleByteSize = getTupleSize();
+    std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
+
+    for (int i = 0; i < _num_tuples; i++) {
+        auto p_tuple = tuples[i];
+        p_tuple->AppendBin2Vec(wbuf, i);
+    }
+    
+    // built-in C buffering method
+    // can be optimized by writing our own buffer
+    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
+    fwrite(&wbuf[0], 1, wbuf.size(), File_pointer);
 
     // Add a fence pointer every FP_offset_interval (default value) keys
     addFences(tuples);
 
     // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
     addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
+
+    // TODO: need to write fence ptr & bloomfilter to files as well
+    // TODO: either delete tuples here or out at the Run
 }
 
 bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples) {
@@ -97,6 +118,8 @@ void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_eleme
 // TODO: This should open the file pointer, retrieve all the tuples in it and return them
 vector<Tuple*> FileMetaData::GetAllTuples() {
     return vector<Tuple*>();
+
+    
 }
 
 FILE *FileMetaData::getFilePointer() const {
@@ -107,16 +130,18 @@ int FileMetaData::getNumTuples() const {
     return _num_tuples;
 }
 
-
-
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
 Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, const Parameters par):
         _files_per_run(files_per_run), _level_id(Level_id), _run_id(Run_id) {
     _num_tuples = tuples.size();
+
     uint files_to_be_created = _num_tuples * par.getTupleByteSize() / par.getSstSize();
     uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
     if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
         files_to_be_created++;
+
+    DEBUG_LOG(std::string("Constructing Run: creating #") + std::to_string(files_to_be_created) + 
+        " files with #" + std::to_string(tuples_per_file) + " tuples per file."); 
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to
@@ -126,6 +151,7 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, c
         auto last = tuples.begin() + (i + 1)*tuples_per_file;
         if ((i + 1)*tuples_per_file > _num_tuples)
             last = tuples.begin() + _num_tuples - i*tuples_per_file;
+
         vector<Tuple*> newTmpVec(first, last);
 
         if (!AddNewFMD(newTmpVec, _level_id, _run_id))
@@ -139,22 +165,6 @@ Run::~Run() {
     }
 }
 
-//bool Run::Flush(Buffer* buf) {
-//    return true;
-//}
-//
-///* Collecting all binary data for this Run on disk
-// * and re-org them in struct of Buffer */
-//Buffer* Run::Fetch() {
-//    for (auto& block : _files) {
-//
-//
-//
-//    }
-//
-//    return nullptr;
-//
-//}
 
 bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
@@ -163,11 +173,17 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // and the next time we create a new level this will be level1 so the lower level will be level 0 and the highest \
     // will be the n-th. Also when we merge some runs of a level let's reuse the same files. Deleting them and creating new
     // ones will probably lead to unnecessary overhead
+    
+    int fdSerialID = _files.size();
+    std::string fileName("level" + std::to_string(level_id) + 
+        "run" + std::to_string(run_id) + 
+        "file" + std::to_string(fdSerialID) + ".sst");
+    DEBUG_LOG(std::string("starting add new FMD of file#") + fileName);
 
-//    if (_files.size() == _fp_per_run)
-//        return false;
-    FILE *fp = nullptr; // open fp here please
+    FILE* fp = fopen(fileName.c_str(), "wb");
     auto *tmpFMD = new FileMetaData(fp, tuples);
+    fclose(fp);
+    
     _files.push_back(tmpFMD);
     return true;
 }

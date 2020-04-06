@@ -19,10 +19,16 @@ int main(int argc, char **argv)
     Value v2 = Value({4, 5, 7, 8, 9});
     db.put(4, v2);
 
-    Value v3 = Value({0});
+    Value v3 = Value({333, 3});
     db.put(9, v3);
 
-    db.show_buf();
+    db.put(10, v3);
+
+    db.put(5, v3);
+
+    db.put(3, v3);
+
+    db.put(7, v3);
 
     return 0;
 }

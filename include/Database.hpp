@@ -29,8 +29,8 @@ class DB
 public:
     db_status status;
 
-    DB() { table = new LSM_T(64, 1, 3); };
-    ~DB() { delete table; };
+    DB();
+    ~DB();
 
     Value get(int key);
     void put(int key, Value val);

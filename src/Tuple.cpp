@@ -3,7 +3,9 @@
 //
 
 #include "Tuple.h"
-
+#include "Args.h"
+#include <stdlib.h>
+#include <string.h>
 #include <utility>
 
 using namespace std;
@@ -11,6 +13,9 @@ using namespace std;
 Tuple::Tuple(std::string key, Value val):
     _key(std::move(key)), _value(std::move(val)){
 }
+
+// empty constructor for reading in persistent data on disk
+Tuple::Tuple() {}
 
 Tuple::~Tuple() {}
 
@@ -33,3 +38,39 @@ std::string Tuple::ToString() const{
 
 	return ret;
 }
+
+void Tuple::AppendBin2Vec(std::vector<char>& wbuf, int pos) const {
+    int cap = getTupleSize();
+    char* tmp = new char[cap];
+    memset(tmp, 0, cap); 
+
+    // convert _key from int to char(byte) and fill it in char array
+    int k = std::stoi(_key);
+    memcpy(tmp, &k, SIZEOFINT);
+    char* valStartAddr = tmp + SIZEOFINT;
+
+    // these 2 variables are numbers of items in vecotr
+    int maxValCnts = (cap - SIZEOFINT) / SIZEOFINT;
+    int num2copy = (_value.items.size() <= maxValCnts)? _value.items.size() : maxValCnts;
+
+    memcpy(valStartAddr, &_value.items[0], num2copy*SIZEOFINT);
+
+    // if there's still empty space left, add up a 'marker'
+    // to indicate termination
+    if (num2copy + 1 < maxValCnts) {
+        int terminateMarker = TERMINATION;
+        memcpy(valStartAddr+num2copy*SIZEOFINT, &terminateMarker, SIZEOFINT);
+    }
+
+    // copy tmp back to wbuf
+    memcpy(&wbuf[0] + pos, tmp, cap);
+    delete[] tmp;
+}
+
+void Tuple::Read2Tuple(std::vector<char>& rbuf, int pos) {
+    auto size = getTupleSize();
+
+    // can copy necessary chunk of data and start working in a newly spawned thread
+    // to optimize performance
+}
+

@@ -33,6 +33,8 @@ private:
 public:
     Tuple(std::string key, Value val);
     ~Tuple();
+
+    Tuple();
 //    inline void SetKey(const std::string key){
 //        this->_key = key;
 //    }
@@ -46,7 +48,10 @@ public:
         return _value;
     }
     std::string ToString() const;
-        
+    
+    void AppendBin2Vec(char* wbuf) const;
+    void Read2Tuple(char* rbuf);
+
     void PrintTuple();
 };
 

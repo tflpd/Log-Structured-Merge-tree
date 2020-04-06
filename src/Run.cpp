@@ -1,33 +1,77 @@
 #include "Run.h"
+#include "Log.h"
+#include "Args.h"
+#include <fstream>
+#include <stdio.h>
+// #include <fcntl.h>
+// #include <unistd.h>
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
-        _file_pointer(File_pointer) {
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName):
+        _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(500);
 
     // TODO: Write the values in the SST file and delete them from memory
+    int tupleByteSize = getTupleSize();
+    char* wbuf = new char[_num_tuples*tupleByteSize];
+    // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
+
+    for (int i = 0; i < _num_tuples; i++) {
+        int offset = i * tupleByteSize;
+        auto p_tuple = tuples[i];
+        p_tuple->AppendBin2Vec(wbuf + offset);
+    }
+    
+    // built-in C buffering method
+    // can be optimized by writing our own buffer
+    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
+    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
 
     // Add a fence pointer every 500 (default value) keys
     addFences(tuples);
 
     // Add Bloom Filters of size 1024 and precision of 10 (bit) (default values) for the keys of the tuples
     addBloomFilters(tuples, 1024, 10);
+
+
+    delete[] wbuf;
 }
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, int BF_bits_per_element):
-        _file_pointer(File_pointer) {
+FileMetaData::FileMetaData(std::string FileName) : _file_name(FileName) {}
+
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, 
+        int BF_bits_per_element, std::string FileName):
+        _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(FP_offset_interval);
 
-    // TODO: Write the values in the SST file and delete them from memory
+    int tupleByteSize = getTupleSize();
+    char* wbuf = new char[_num_tuples*tupleByteSize];
+    // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
+
+    for (int i = 0; i < _num_tuples; i++) {
+        int offset = i * tupleByteSize;
+        auto p_tuple = tuples[i];
+        p_tuple->AppendBin2Vec(wbuf + offset);
+    }
+    
+    // built-in C buffering method
+    // can be optimized by writing our own buffer
+    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
+    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
 
     // Add a fence pointer every FP_offset_interval (default value) keys
     addFences(tuples);
 
     // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
     addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
+
+    // TODO: need to write fence ptr & bloomfilter to files as well
+    // TODO: either delete tuples here or out at the Run
+
+    delete[] wbuf;
 }
 
 bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples) {
@@ -68,6 +112,9 @@ FileMetaData::~FileMetaData() {
 //
 //}
 
+std::string FileMetaData::getFileName() const {
+    return _file_name;
+}
 
 void FileMetaData::addFences(const vector<Tuple*> tuples){
     for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
@@ -96,7 +143,27 @@ void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_eleme
 
 // TODO: This should open the file pointer, retrieve all the tuples in it and return them
 vector<Tuple*> FileMetaData::GetAllTuples() {
-    return vector<Tuple*>();
+    vector<Tuple*> ret;
+    int tupleSize = getTupleSize();
+    char* tmpbuf = new char[tupleSize*_num_tuples];
+
+    FILE* fp = fopen(_file_name.c_str(), "rb");
+    fread(tmpbuf, 1, tupleSize * _num_tuples, fp);
+    
+    for (int num = 0; num < _num_tuples; num++) {
+        int offset = num * tupleSize;
+        auto p_tuple = new Tuple();
+        p_tuple->Read2Tuple(tmpbuf + offset);
+
+        ret.push_back(p_tuple);
+    }
+
+    fclose(fp);
+    // for (auto p_tuple : ret)
+    //     cout << p_tuple->ToString() << endl;
+
+    delete[] tmpbuf;
+    return ret;
 }
 
 FILE *FileMetaData::getFilePointer() const {
@@ -107,16 +174,19 @@ int FileMetaData::getNumTuples() const {
     return _num_tuples;
 }
 
-
-
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
 Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, const Parameters par):
         _files_per_run(files_per_run), _level_id(Level_id), _run_id(Run_id) {
     _num_tuples = tuples.size();
+
     uint files_to_be_created = _num_tuples * par.getTupleByteSize() / par.getSstSize();
     uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
     if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
         files_to_be_created++;
+
+    DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) + 
+        ": creating #" + std::to_string(files_to_be_created) + 
+        " files with #" + std::to_string(tuples_per_file) + " tuples per file."); 
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to
@@ -126,10 +196,14 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, c
         auto last = tuples.begin() + (i + 1)*tuples_per_file;
         if ((i + 1)*tuples_per_file > _num_tuples)
             last = tuples.begin() + _num_tuples - i*tuples_per_file;
+
         vector<Tuple*> newTmpVec(first, last);
 
-        if (!AddNewFMD(newTmpVec, _level_id, _run_id))
+        if (!AddNewFMD(newTmpVec, _level_id, _run_id)) {
+            KEY_LOG(std::string("Constructing Run#)") + std::to_string(_run_id) + 
+                "failed! Because AddNewFMD failed.");
             exit(-1);
+        }
     }
 }
 
@@ -139,22 +213,14 @@ Run::~Run() {
     }
 }
 
-//bool Run::Flush(Buffer* buf) {
-//    return true;
-//}
-//
-///* Collecting all binary data for this Run on disk
-// * and re-org them in struct of Buffer */
-//Buffer* Run::Fetch() {
-//    for (auto& block : _files) {
-//
-//
-//
-//    }
-//
-//    return nullptr;
-//
-//}
+bool Run::DeleteFMD() {
+    for (auto pFile : _files) {
+        const char* fileName = pFile->getFileName().c_str();
+        remove(fileName); // system call
+    }
+
+    return true;
+}
 
 bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
@@ -163,26 +229,28 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // and the next time we create a new level this will be level1 so the lower level will be level 0 and the highest \
     // will be the n-th. Also when we merge some runs of a level let's reuse the same files. Deleting them and creating new
     // ones will probably lead to unnecessary overhead
+    
+    int fdSerialID = _files.size();
+    std::string fileName("level" + std::to_string(level_id) + 
+        "run" + std::to_string(run_id) + 
+        "file" + std::to_string(fdSerialID) + ".sst");
+    DEBUG_LOG(std::string("starting add new FMD of file#") + fileName);
 
-//    if (_files.size() == _fp_per_run)
-//        return false;
-    FILE *fp = nullptr; // open fp here please
-    auto *tmpFMD = new FileMetaData(fp, tuples);
+    FILE* fp = fopen(fileName.c_str(), "wb");
+    auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
+    fclose(fp);
+
     _files.push_back(tmpFMD);
     return true;
 }
 
 vector<Tuple*> Run::GetAllTuples() {
-    uint size = 0;
-    for (auto & _file : _files) {
-        size += _file->GetAllTuples().size();
-    }
-
     vector<Tuple*> result;
-    result.reserve(size);
     // TODO: Maybe there is a better way to copy everything in results?
     for (auto & _file : _files) {
-        result.insert(result.end(), _file->GetAllTuples().begin(), _file->GetAllTuples().end());
+        DEBUG_LOG(std::string("getting tuples from #") + _file->getFileName());
+        auto tuples = _file->GetAllTuples();
+        result.insert(result.end(), tuples.begin(), tuples.end());
     }
     return result;
 }

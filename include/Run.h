@@ -16,10 +16,14 @@ struct FileMetaData
 {
 public:
     // Default constructor
-    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples);
+    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName);
+
+    // will be called from failure/reboot recovery
+    FileMetaData(std::string FileName);
+
     // Constructor with parameterizable fence pointers intervals and bloom filter values capacity and precision
     FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-                 int BF_bits_per_element);
+                 int BF_bits_per_element, std::string FileName);
 
     ~FileMetaData();
 
@@ -34,9 +38,11 @@ public:
                                    int BF_bits_per_element);
 
     int getNumTuples() const;
+    std::string getFileName() const;
 
 private:
     FILE *_file_pointer;
+    std::string _file_name;
     FencePointer *_fence_pointerf;
     vector<BF::BloomFilter*> _bloom_filters;
     // The number of the tuples in this file
@@ -51,20 +57,13 @@ private:
 
 
 
-
-
-
-
-
-
 class Run {
 public:
+    // Run(uint f, vector<Tuple*>& tuples, int lv_id, int run_id);
     Run(uint files_per_run, vector<Tuple*>& tuples, int level_id, int run_id, const Parameters par);
     ~Run(); // release resources held by FileMetaData?
 
-    //bool Flush(Buffer* buf);
-    // bool Fetch() const;
-    //Buffer* Fetch();
+    void GenerateFileName(char* name, int level_id, int run_id);
 
     // Adds/creates a new file and the respective FileMetaData struct of this file.
     // This file will consist of the tuples "tuples". The two id's passed will be used for the file creation/naming
@@ -74,6 +73,8 @@ public:
     //bool ModifyFMDsComponents(uint files_per_run, const vector<Tuple>& tuples, const Parameters& _par);
     // Accumulates all the tuples of the underlying files of this run and returns them
     vector<Tuple*> GetAllTuples();
+
+    bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

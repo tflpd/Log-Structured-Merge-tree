@@ -12,7 +12,7 @@
 
 class LSM_T {
 public:
-    LSM_T(uint SST_size, uint a, uint runs);
+    LSM_T(int minSSTSize, int tupleSize, int a, int runs);
     ~LSM_T();
 
     Tuple* Search(std::string key);
@@ -27,9 +27,10 @@ private:
     Buffer* _buf = nullptr;
     /* used for saving temporary data obtained after each merge, reducing one disk IO */
     //Buffer* _auxiliary_buf = nullptr;
-    uint _sst_size;
-    uint _a; // buf size = _a * _sst_size;
-    uint _runs;
+    int _tuple_size;
+    int _min_sst_size;
+    int _a; // buf size = _a * _sst_size;
+    int _runs;
 };
 
 // #include "LSM_T.cpp"

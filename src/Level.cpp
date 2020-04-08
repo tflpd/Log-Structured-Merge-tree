@@ -172,7 +172,11 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //
 //    }
     _Sort(tuples);
-    _runs.emplace_back(_files_per_run, tuples, _id, _runs.size(), _par);
+
+    int runSize = _runs.size();
+    std::cout << runSize << std::endl;
+
+    _runs.emplace_back(_files_per_run, tuples, _id, runSize, _par);
     // _runs.emplace_back(_files_per_run, tuples, _id, _runs.size());
     return true;
 }

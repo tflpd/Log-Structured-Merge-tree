@@ -16,10 +16,14 @@ struct FileMetaData
 {
 public:
     // Default constructor
-    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples);
+    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName);
+
+    // will be called from failure/reboot recovery
+    FileMetaData(std::string FileName);
+
     // Constructor with parameterizable fence pointers intervals and bloom filter values capacity and precision
     FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-                 int BF_bits_per_element);
+                 int BF_bits_per_element, std::string FileName);
 
     ~FileMetaData();
 
@@ -34,9 +38,11 @@ public:
                                    int BF_bits_per_element);
 
     int getNumTuples() const;
+    std::string getFileName() const;
 
 private:
     FILE *_file_pointer;
+    std::string _file_name;
     FencePointer *_fence_pointerf;
     vector<BF::BloomFilter*> _bloom_filters;
     // The number of the tuples in this file

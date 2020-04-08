@@ -15,7 +15,9 @@ Tuple::Tuple(std::string key, Value val):
 }
 
 // empty constructor for reading in persistent data on disk
-Tuple::Tuple() {}
+Tuple::Tuple() {
+    _value = Value();
+}
 
 Tuple::~Tuple() {}
 
@@ -67,10 +69,31 @@ void Tuple::AppendBin2Vec(std::vector<char>& wbuf, int pos) const {
     delete[] tmp;
 }
 
-void Tuple::Read2Tuple(std::vector<char>& rbuf, int pos) {
+// @rbuf: starting point of this tuple in the whole array
+void Tuple::Read2Tuple(char* rbuf) {
     auto size = getTupleSize();
 
-    // can copy necessary chunk of data and start working in a newly spawned thread
+    // TODO: may copy necessary chunk of data and start working in a newly spawned thread
     // to optimize performance
+    // not sure the copy process is more costly than working paralel
+    // std::vector<char> tmpbuf(rbuf, rbuf+pos);
+
+    // first MAXTUPLEKEYCNTS * SIZEOFINT bytes refer to key
+    int size_of_key = MAXTUPLEKEYCNTS * SIZEOFINT;
+    _key = std::string(rbuf, size_of_key);
+
+    // iterate through the following bytes util meets a val of TERMINATION
+    // dumb approach
+    // TODO: any better alternative?
+    char* pos = rbuf + size_of_key;
+    for (int cnt = 0; cnt < MAXTUPLEVALCNTS; cnt++) {
+        int val;
+        std::memcpy(&val, pos, SIZEOFINT);
+
+        if (val == TERMINATION) break;
+        _value.items.push_back(val);
+
+        pos += SIZEOFINT;
+    }
 }
 

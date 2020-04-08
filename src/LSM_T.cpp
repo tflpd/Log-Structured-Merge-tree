@@ -48,7 +48,6 @@ bool LSM_T::Insert(std::string key, Value val) {
             // TODO: Probably this should be uncommented to actually create the new level
             Parameters arg(_tuple_size, _min_sst_size, _a, _runs);
             _levels.emplace_back(cnt, arg);
-
             auto bottom = _levels.back();
             DEBUG_LOG(" new level is now appending a new run ...");
             bottom.AddNewRun(tuples);

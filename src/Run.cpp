@@ -6,8 +6,8 @@
 // #include <fcntl.h>
 // #include <unistd.h>
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
-        _file_pointer(File_pointer) {
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName):
+        _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(500);
@@ -22,8 +22,11 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples):
     addBloomFilters(tuples, 1024, 10);
 }
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, int BF_bits_per_element):
-        _file_pointer(File_pointer) {
+FileMetaData::FileMetaData(std::string FileName) : _file_name(FileName) {}
+
+FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, 
+        int BF_bits_per_element, std::string FileName):
+        _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(FP_offset_interval);
@@ -89,6 +92,9 @@ FileMetaData::~FileMetaData() {
 //
 //}
 
+std::string FileMetaData::getFileName() const {
+    return _file_name;
+}
 
 void FileMetaData::addFences(const vector<Tuple*> tuples){
     for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
@@ -117,9 +123,21 @@ void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_eleme
 
 // TODO: This should open the file pointer, retrieve all the tuples in it and return them
 vector<Tuple*> FileMetaData::GetAllTuples() {
-    return vector<Tuple*>();
+    vector<Tuple*> ret;
+    int tupleSize = getTupleSize();
+    char* tmpbuf = new char[tupleSize*_num_tuples];
+    fread(tmpbuf, _num_tuples, tupleSize, _file_pointer);
 
-    
+    for (int num = 0; num < _num_tuples; num++) {
+        int start = num * tupleSize;
+        auto p_tuple = new Tuple();
+        p_tuple->Read2Tuple(tmpbuf + start);
+
+        ret.push_back(p_tuple);
+    }
+
+    delete[] tmpbuf;
+    return ret;
 }
 
 FILE *FileMetaData::getFilePointer() const {
@@ -140,7 +158,8 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, c
     if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
         files_to_be_created++;
 
-    DEBUG_LOG(std::string("Constructing Run: creating #") + std::to_string(files_to_be_created) + 
+    DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) + 
+        ": creating #" + std::to_string(files_to_be_created) + 
         " files with #" + std::to_string(tuples_per_file) + " tuples per file."); 
 
     for (int i = 0; i < files_to_be_created; ++i) {
@@ -154,8 +173,11 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, c
 
         vector<Tuple*> newTmpVec(first, last);
 
-        if (!AddNewFMD(newTmpVec, _level_id, _run_id))
+        if (!AddNewFMD(newTmpVec, _level_id, _run_id)) {
+            KEY_LOG(std::string("Constructing Run#)") + std::to_string(_run_id) + 
+                "failed! Because AddNewFMD failed.");
             exit(-1);
+        }
     }
 }
 
@@ -181,9 +203,9 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     DEBUG_LOG(std::string("starting add new FMD of file#") + fileName);
 
     FILE* fp = fopen(fileName.c_str(), "wb");
-    auto *tmpFMD = new FileMetaData(fp, tuples);
+    auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
     fclose(fp);
-    
+
     _files.push_back(tmpFMD);
     return true;
 }
@@ -198,7 +220,9 @@ vector<Tuple*> Run::GetAllTuples() {
     result.reserve(size);
     // TODO: Maybe there is a better way to copy everything in results?
     for (auto & _file : _files) {
-        result.insert(result.end(), _file->GetAllTuples().begin(), _file->GetAllTuples().end());
+        DEBUG_LOG(std::string("getting tuples from #") + _file->getFileName());
+        auto tuples = _file->GetAllTuples();
+        result.insert(result.end(), tuples.begin(), tuples.end());
     }
     return result;
 }

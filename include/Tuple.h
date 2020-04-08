@@ -50,7 +50,7 @@ public:
     std::string ToString() const;
     
     void AppendBin2Vec(std::vector<char>& wbuf, int pos) const;
-    void Read2Tuple(std::vector<char>& rbuf, int pos);
+    void Read2Tuple(char* rbuf);
 
     void PrintTuple();
 };

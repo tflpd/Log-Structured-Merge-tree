@@ -57,12 +57,6 @@ private:
 
 
 
-
-
-
-
-
-
 class Run {
 public:
     // Run(uint f, vector<Tuple*>& tuples, int lv_id, int run_id);
@@ -79,6 +73,8 @@ public:
     //bool ModifyFMDsComponents(uint files_per_run, const vector<Tuple>& tuples, const Parameters& _par);
     // Accumulates all the tuples of the underlying files of this run and returns them
     vector<Tuple*> GetAllTuples();
+
+    bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

@@ -146,8 +146,10 @@ vector<Tuple*> FileMetaData::GetAllTuples() {
     vector<Tuple*> ret;
     int tupleSize = getTupleSize();
     char* tmpbuf = new char[tupleSize*_num_tuples];
-    fread(tmpbuf, _num_tuples, tupleSize, _file_pointer);
 
+    FILE* fp = fopen(_file_name.c_str(), "rb");
+    fread(tmpbuf, 1, tupleSize * _num_tuples, fp);
+    
     for (int num = 0; num < _num_tuples; num++) {
         int offset = num * tupleSize;
         auto p_tuple = new Tuple();
@@ -156,8 +158,9 @@ vector<Tuple*> FileMetaData::GetAllTuples() {
         ret.push_back(p_tuple);
     }
 
-    for (auto p_tuple : ret)
-        cout << p_tuple->ToString() << endl;
+    fclose(fp);
+    // for (auto p_tuple : ret)
+    //     cout << p_tuple->ToString() << endl;
 
     delete[] tmpbuf;
     return ret;
@@ -210,6 +213,14 @@ Run::~Run() {
     }
 }
 
+bool Run::DeleteFMD() {
+    for (auto pFile : _files) {
+        const char* fileName = pFile->getFileName().c_str();
+        remove(fileName); // system call
+    }
+
+    return true;
+}
 
 bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
     // TODO: Create SST file here and open it. Make sure we use _files.size() to get the serial id \
@@ -234,13 +245,7 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
 }
 
 vector<Tuple*> Run::GetAllTuples() {
-    uint size = 0;
-    for (auto & _file : _files) {
-        size += _file->GetAllTuples().size();
-    }
-
     vector<Tuple*> result;
-    result.reserve(size);
     // TODO: Maybe there is a better way to copy everything in results?
     for (auto & _file : _files) {
         DEBUG_LOG(std::string("getting tuples from #") + _file->getFileName());

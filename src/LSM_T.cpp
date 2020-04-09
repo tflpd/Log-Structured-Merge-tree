@@ -21,7 +21,7 @@ bool LSM_T::Insert(std::string key, Value val) {
 
     // if (_buf->IsFull()) {
     if (!ret) {
-        DEBUG_LOG("In-memory buffer is filled out!");
+        // DEBUG_LOG("In-memory buffer is filled out!");
         auto tuples = _buf->GetTuples();
         bool push_down = true;
 
@@ -44,12 +44,12 @@ bool LSM_T::Insert(std::string key, Value val) {
         // touch the bottom of levels, create a new Level
         if (push_down) {
             DEBUG_LOG("creating a new level ...");
-            auto cnt = _levels.size();
+            auto lv = _levels.size();
             // TODO: Probably this should be uncommented to actually create the new level
             Parameters arg(_tuple_size, _min_sst_size, _a, _runs);
-            _levels.emplace_back(cnt, arg);
-            auto bottom = _levels.back();
-            DEBUG_LOG(" new level is now appending a new run ...");
+            _levels.emplace_back(lv, arg);
+            auto& bottom = _levels.back();
+            // DEBUG_LOG(" new level is now appending a new run ...");
             bottom.AddNewRun(tuples);
         }
 

@@ -4,7 +4,7 @@
 
 Buffer::Buffer(int size): _max_cap(size) {
 	// may change vector to dynamic allocated array in the future
-	DEBUG_LOG(std::string("creating a buffer with max size of #" + std::to_string(_max_cap)));
+	// DEBUG_LOG(std::string("creating a buffer with max size of #" + std::to_string(_max_cap)));
 }
 
 Buffer::~Buffer() {

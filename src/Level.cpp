@@ -24,11 +24,6 @@ bool Level::ReadyMerge() const {
 // Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
 bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
     //std::vector<Tuple*> accumulative_tuples;
-    uint final_run_size = 0;
-    for (auto& run : _runs)
-        final_run_size += run.GetAllTuples().size();
-    final_run_size += tuples.size();
-    tuples.reserve(final_run_size);
     // TODO: maybe change here the curr tuples counter
     //accumulative_tuples.reserve(final_run_size);
 
@@ -50,7 +45,8 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 
     // Add all tuples of this level in a vector
     for (auto& run : _runs) {
-        tuples.insert(tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
+        auto tuples = run.GetAllTuples();
+        tuples.insert(tuples.end(), tuples.begin(), tuples.end());
         //accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
     }
     // and the ones provided as an argument
@@ -62,7 +58,7 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
     // TODO: Delete all existing runs and their sst files here
 //    for (auto p_buf : buf_vec)
 //        delete p_buf;
-//    _Clear();
+    _Clear();
 
     return true;
 }
@@ -77,8 +73,11 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 //}
 
 bool Level::_Clear() {
+    for (auto& run : _runs) 
+        run.DeleteFMD(); 
+
     std::vector<Run> tmp;
-    _runs.swap(tmp);
+    _runs.swap(tmp);       
     return true;
 }
 
@@ -172,10 +171,7 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //
 //    }
     _Sort(tuples);
-
     int runSize = _runs.size();
-    std::cout << runSize << std::endl;
-
     _runs.emplace_back(_files_per_run, tuples, _id, runSize, _par);
     // _runs.emplace_back(_files_per_run, tuples, _id, _runs.size());
     return true;

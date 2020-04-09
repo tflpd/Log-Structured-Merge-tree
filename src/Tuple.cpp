@@ -41,7 +41,8 @@ std::string Tuple::ToString() const{
 	return ret;
 }
 
-void Tuple::AppendBin2Vec(std::vector<char>& wbuf, int pos) const {
+// @rbuf: starting point of this tuple in the whole array
+void Tuple::AppendBin2Vec(char* wbuf) const {
     int cap = getTupleSize();
     char* tmp = new char[cap];
     memset(tmp, 0, cap); 
@@ -49,23 +50,19 @@ void Tuple::AppendBin2Vec(std::vector<char>& wbuf, int pos) const {
     // convert _key from int to char(byte) and fill it in char array
     int k = std::stoi(_key);
     memcpy(tmp, &k, SIZEOFINT);
-    char* valStartAddr = tmp + SIZEOFINT;
 
-    // these 2 variables are numbers of items in vecotr
-    int maxValCnts = (cap - SIZEOFINT) / SIZEOFINT;
-    int num2copy = (_value.items.size() <= maxValCnts)? _value.items.size() : maxValCnts;
-
-    memcpy(valStartAddr, &_value.items[0], num2copy*SIZEOFINT);
+    int num2copy = (_value.items.size() <= MAXTUPLEVALCNTS)? _value.items.size() : MAXTUPLEVALCNTS;
+    memcpy(tmp + SIZEOFINT, &_value.items[0], num2copy*SIZEOFINT);
 
     // if there's still empty space left, add up a 'marker'
     // to indicate termination
-    if (num2copy + 1 < maxValCnts) {
+    if (num2copy + 1 < MAXTUPLEVALCNTS) {
         int terminateMarker = TERMINATION;
-        memcpy(valStartAddr+num2copy*SIZEOFINT, &terminateMarker, SIZEOFINT);
+        memcpy(tmp + SIZEOFINT + num2copy*SIZEOFINT, &terminateMarker, SIZEOFINT);
     }
 
     // copy tmp back to wbuf
-    memcpy(&wbuf[0] + pos, tmp, cap);
+    memcpy(wbuf, tmp, cap);
     delete[] tmp;
 }
 
@@ -80,7 +77,9 @@ void Tuple::Read2Tuple(char* rbuf) {
 
     // first MAXTUPLEKEYCNTS * SIZEOFINT bytes refer to key
     int size_of_key = MAXTUPLEKEYCNTS * SIZEOFINT;
-    _key = std::string(rbuf, size_of_key);
+    int key;
+    std::memcpy(&key, rbuf, SIZEOFINT);
+    _key = to_string(key);
 
     // iterate through the following bytes util meets a val of TERMINATION
     // dumb approach

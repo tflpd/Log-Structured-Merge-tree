@@ -49,7 +49,7 @@ public:
     }
     std::string ToString() const;
     
-    void AppendBin2Vec(std::vector<char>& wbuf, int pos) const;
+    void AppendBin2Vec(char* wbuf) const;
     void Read2Tuple(char* rbuf);
 
     void PrintTuple();

@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     db.put(2, v1);
     db.put(1, v1);
 
-    Value v2 = Value({4, 5, 7, 8, 9});
+    Value v2 = Value({4, 5});
     db.put(4, v2);
     Value v3 = Value({333, 3});
     db.put(9, v3);

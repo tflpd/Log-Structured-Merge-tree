@@ -10,10 +10,10 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std:
         _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
-    _fence_pointerf = new FencePointer(500);
+    _fence_pointerf = new FencePointer(getDefaultFPInterval());
 
     // TODO: Write the values in the SST file and delete them from memory
-    int tupleByteSize = getTupleSize();
+    int tupleByteSize = getTupleBytesSize();
     char* wbuf = new char[_num_tuples*tupleByteSize];
     // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
 
@@ -32,7 +32,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std:
     addFences(tuples);
 
     // Add Bloom Filters of size 1024 and precision of 10 (bit) (default values) for the keys of the tuples
-    addBloomFilters(tuples, 1024, 10);
+    addBloomFilters(tuples, getDefaultBFNumTuples(), getDefaultBFBitsPerElement());
 
 
     delete[] wbuf;
@@ -47,7 +47,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int 
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(FP_offset_interval);
 
-    int tupleByteSize = getTupleSize();
+    int tupleByteSize = getTupleBytesSize();
     char* wbuf = new char[_num_tuples*tupleByteSize];
     // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
 
@@ -116,11 +116,19 @@ std::string FileMetaData::getFileName() const {
     return _file_name;
 }
 
-void FileMetaData::addFences(const vector<Tuple*> tuples){
-    for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
-        _fence_pointerf->AddFence(tuples.at(i)->GetKey());
+/// It will always add at least two fence pointers, one to the start and one to the end of the passed tuples
+void FileMetaData::addFences(const vector<Tuple*>& tuples){
+    //std::cout << _fence_pointerf->getIntervalSize() << std::endl;
+    if (tuples.size() % (_fence_pointerf->getIntervalSize() + 1) == 0) {
+        for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
+            _fence_pointerf->AddFence(tuples.at(i)->GetKey());
+        }
+    }else{
+        for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
+            _fence_pointerf->AddFence(tuples.at(i)->GetKey());
+        }
+        _fence_pointerf->AddFence(tuples.at(tuples.size() - 1)->GetKey());
     }
-    _fence_pointerf->AddFence(tuples.at(tuples.size() - 1)->GetKey());
 }
 
 void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element) {
@@ -144,7 +152,7 @@ void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_eleme
 // TODO: This should open the file pointer, retrieve all the tuples in it and return them
 vector<Tuple*> FileMetaData::GetAllTuples() {
     vector<Tuple*> ret;
-    int tupleSize = getTupleSize();
+    int tupleSize = getTupleBytesSize();
     char* tmpbuf = new char[tupleSize*_num_tuples];
 
     FILE* fp = fopen(_file_name.c_str(), "rb");
@@ -174,19 +182,24 @@ int FileMetaData::getNumTuples() const {
     return _num_tuples;
 }
 
+void FileMetaData::printFences() {
+    _fence_pointerf->printFences();
+}
+
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
-Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id, const Parameters par):
+Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
         _files_per_run(files_per_run), _level_id(Level_id), _run_id(Run_id) {
     _num_tuples = tuples.size();
 
-    uint files_to_be_created = _num_tuples * par.getTupleByteSize() / par.getSstSize();
-    uint tuples_per_file = par.getSstSize() / par.getTupleByteSize();
-    if (_num_tuples * par.getTupleByteSize() % par.getSstSize())
+    uint files_to_be_created = _num_tuples * getTupleBytesSize() / getSSTSize();
+    uint tuples_per_file = getSSTSize() / getTupleBytesSize();
+    if (_num_tuples * getTupleBytesSize() % getSSTSize())
         files_to_be_created++;
 
-    DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) + 
-        ": creating #" + std::to_string(files_to_be_created) + 
-        " files with #" + std::to_string(tuples_per_file) + " tuples per file."); 
+    DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) +
+                      " of Level#" + std::to_string(_level_id) +
+                      ": creating #" + std::to_string(files_to_be_created) +
+        " file(s) with #" + std::to_string(tuples_per_file) + " tuples per file.");
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to
@@ -238,6 +251,7 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
 
     FILE* fp = fopen(fileName.c_str(), "wb");
     auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
+    tmpFMD->printFences();
     fclose(fp);
 
     _files.push_back(tmpFMD);

@@ -12,7 +12,7 @@
 
 class Level {
 public:
-    Level(uint level_id, const Parameters& par);
+    Level(uint level_id);
     ~Level();
 
     /// Takes the provided tuples, sorts them, creates a new run with them and adds that run to the level
@@ -34,7 +34,6 @@ private:
     uint _files_per_run; // This is not necessary since we keep in the Parameters struct the tuple size and the sst size.
     // More specifically this can be calculated as files_per_run = level0_max_tuples * pow(size_ratio, level_id) / _sst_size
     std::vector<Run> _runs;
-    Parameters _par;
 };
 
 #endif

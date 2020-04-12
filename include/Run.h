@@ -39,6 +39,7 @@ public:
 
     int getNumTuples() const;
     std::string getFileName() const;
+    void printFences();
 
 private:
     FILE *_file_pointer;
@@ -49,7 +50,7 @@ private:
     int _num_tuples;
 
     // Adds/creates the fences of this file consuming the provided tuples
-    void addFences(const vector<Tuple*> tuples);
+    void addFences(const vector<Tuple*>& tuples);
     // Adds/creates the BFs (with specific parameters) of this file consuming the provided tuples
     void addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element);
 };
@@ -60,7 +61,7 @@ private:
 class Run {
 public:
     // Run(uint f, vector<Tuple*>& tuples, int lv_id, int run_id);
-    Run(uint files_per_run, vector<Tuple*>& tuples, int level_id, int run_id, const Parameters par);
+    Run(uint files_per_run, vector<Tuple*>& tuples, int level_id, int run_id);
     ~Run(); // release resources held by FileMetaData?
 
     void GenerateFileName(char* name, int level_id, int run_id);

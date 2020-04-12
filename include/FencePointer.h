@@ -23,6 +23,8 @@ public:
 
     int getIntervalSize() const;
 
+    void printFences();
+
 
 private:
     std::vector<std::string> _fences;

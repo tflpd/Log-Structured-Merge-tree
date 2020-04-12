@@ -8,11 +8,11 @@
 #include "Args.h"
 
 
-LSM_T::LSM_T(int minSSTSize, int tupleSize, int a, int runs):
-        _min_sst_size(minSSTSize), _tuple_size(tupleSize), _a(a), _runs(runs) {
+LSM_T::LSM_T(int SSTSize, int tupleSize, int a, int runs):
+        _sst_size(SSTSize), _tuple_size(tupleSize), _a(a), _max_runs_before_merging(runs) {
 
     assert(runs > 1 && a > 0);
-    int bufsize = _a * _min_sst_size / _tuple_size;
+    int bufsize = _a * _sst_size / _tuple_size;
     _buf = new Buffer(bufsize);
 }
 
@@ -46,8 +46,8 @@ bool LSM_T::Insert(std::string key, Value val) {
             DEBUG_LOG("creating a new level ...");
             auto lv = _levels.size();
             // TODO: Probably this should be uncommented to actually create the new level
-            Parameters arg(_tuple_size, _min_sst_size, _a, _runs);
-            _levels.emplace_back(lv, arg);
+            //Parameters arg(_tuple_size, _sst_size, _a, _max_runs_before_merging);
+            _levels.emplace_back(lv);
             auto& bottom = _levels.back();
             // DEBUG_LOG(" new level is now appending a new run ...");
             bottom.AddNewRun(tuples);

@@ -5,9 +5,9 @@ using namespace templatedb;
 
 DB::DB() {
     auto sstSize = getSSTSize();
-    auto tupleSize = getTupleSize(); // only 1 key, at most 10 values
+    auto tupleSize = getTupleBytesSize(); // only 1 key, at most 10 values
     auto a = getA();
-    auto runs = getMaxRuns();
+    auto runs = getMaxRunsBeforeMerge();
     table = new LSM_T(sstSize, tupleSize, a, runs);
 }
 

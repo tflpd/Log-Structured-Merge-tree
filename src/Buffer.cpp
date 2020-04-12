@@ -17,7 +17,7 @@ bool Buffer::Append(std::string key, Value val) {
 	// as it doesn't hurt data integrity
 	if (tuples.size() >= _max_cap) return false;
 	
-	Tuple* t = new Tuple(key, val);
+	auto* t = new Tuple(key, val);
 
 	tuples.push_back(t);
 	return true;

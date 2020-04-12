@@ -1,12 +1,14 @@
 #include "Level.h"
 #include <vector>
+#include "Args.h"
 #define MEMORY_CAP 10800
 
 
-Level::Level(uint level_id, const Parameters& Par):
-        _id(level_id), _par(Par) {
+Level::Level(uint level_id):
+        _id(level_id) {
     // calculate _fp_per_run
-    _files_per_run = _par.getTuplesLevel0() * pow(_par.getSizeRatio(), level_id)  / _par.getSstSize();
+    //_files_per_run = _par.getTuplesLevel0() * pow(_par.getSizeRatio(), level_id)  / _par.getSstSize();
+    _files_per_run = getBufferBytesSize() * getMaxRunsBeforeMerge() * pow(getLevelSizeRatio(), level_id)  / getSSTSize();
     if (_files_per_run == 0)
         _files_per_run++;
     _curr_tuples_n = 0;
@@ -17,7 +19,7 @@ Level::~Level() {
 }
 
 bool Level::ReadyMerge() const {
-    return _par.getMaxMergeRuns() == _runs.size() + 1;
+    return getMaxRunsBeforeMerge() == _runs.size() + 1;
 }
 
 /* the data to be pushed down is able to fit into memory */
@@ -30,23 +32,23 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
     // TODO: maybe in the future just pop the min first element of every run -> more optimal
     // Number of tuples on the resulting run
 //    uint final_run_size = 0;
-//    for (auto& run : _runs) {
+//    for (auto& run : _max_runs_before_merging) {
 //        final_run_size += run.GetAllTuples().size();
 //    }
 //    final_run_size += tuples->size();
 //
 //    for (int i = 0; i < final_run_size; ++i) {
 //        uint min_value = UINT_MAX;
-//        uint min_run_index = _runs.size() + 1;
-//        for (auto& run : _runs) {
+//        uint min_run_index = _max_runs_before_merging.size() + 1;
+//        for (auto& run : _max_runs_before_merging) {
 //
 //        }
 //    }
 
     // Add all tuples of this level in a vector
     for (auto& run : _runs) {
-        auto tuples = run.GetAllTuples();
-        tuples.insert(tuples.end(), tuples.begin(), tuples.end());
+        auto arr = run.GetAllTuples();
+        tuples.insert(tuples.end(), arr.begin(), arr.end());
         //accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
     }
     // and the ones provided as an argument
@@ -64,8 +66,8 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 }
 
 //bool Level::AppendRun(Buffer* auxiliary_buffer) {
-//    _runs.emplace_back(_files_per_run);
-//    auto last = _runs.back();
+//    _max_runs_before_merging.emplace_back(_files_per_run);
+//    auto last = _max_runs_before_merging.back();
 //    last.Flush(auxiliary_buffer);
 //
 //    auxiliary_buffer->Clear();
@@ -165,15 +167,15 @@ void Level::_Sort(vector<Tuple*>& tuples) {
 
 bool Level::AddNewRun(vector<Tuple*>& tuples) {
     _curr_tuples_n += tuples.size();
-//    if (_runs.size() == _par.getMaxMergeRuns()){
+//    if (_max_runs_before_merging.size() == _par.getMaxMergeRuns()){
 //        _AddMergeRuns(tuples);
 //    }else{
 //
 //    }
     _Sort(tuples);
     int runSize = _runs.size();
-    _runs.emplace_back(_files_per_run, tuples, _id, runSize, _par);
-    // _runs.emplace_back(_files_per_run, tuples, _id, _runs.size());
+    _runs.emplace_back(_files_per_run, tuples, _id, runSize);
+    // _max_runs_before_merging.emplace_back(_files_per_run, tuples, _id, _max_runs_before_merging.size());
     return true;
 }
 

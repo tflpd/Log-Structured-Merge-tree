@@ -28,9 +28,9 @@ private:
     /* used for saving temporary data obtained after each merge, reducing one disk IO */
     //Buffer* _auxiliary_buf = nullptr;
     int _tuple_size;
-    int _min_sst_size;
+    int _sst_size; /// Size of an sst file in BYTES
     int _a; // buf size = _a * _sst_size;
-    int _runs;
+    int _max_runs_before_merging;
 };
 
 // #include "LSM_T.cpp"

@@ -43,7 +43,7 @@ std::string Tuple::ToString() const{
 
 // @rbuf: starting point of this tuple in the whole array
 void Tuple::AppendBin2Vec(char* wbuf) const {
-    int cap = getTupleSize();
+    int cap = getTupleBytesSize();
     char* tmp = new char[cap];
     memset(tmp, 0, cap); 
 
@@ -51,12 +51,12 @@ void Tuple::AppendBin2Vec(char* wbuf) const {
     int k = std::stoi(_key);
     memcpy(tmp, &k, SIZEOFINT);
 
-    int num2copy = (_value.items.size() <= MAXTUPLEVALCNTS)? _value.items.size() : MAXTUPLEVALCNTS;
+    int num2copy = (_value.items.size() <= MAX_TUPLE_VALUES_CNTS) ? _value.items.size() : MAX_TUPLE_VALUES_CNTS;
     memcpy(tmp + SIZEOFINT, &_value.items[0], num2copy*SIZEOFINT);
 
     // if there's still empty space left, add up a 'marker'
     // to indicate termination
-    if (num2copy + 1 < MAXTUPLEVALCNTS) {
+    if (num2copy + 1 < MAX_TUPLE_VALUES_CNTS) {
         int terminateMarker = TERMINATION;
         memcpy(tmp + SIZEOFINT + num2copy*SIZEOFINT, &terminateMarker, SIZEOFINT);
     }
@@ -68,15 +68,15 @@ void Tuple::AppendBin2Vec(char* wbuf) const {
 
 // @rbuf: starting point of this tuple in the whole array
 void Tuple::Read2Tuple(char* rbuf) {
-    auto size = getTupleSize();
+    auto size = getTupleBytesSize();
 
     // TODO: may copy necessary chunk of data and start working in a newly spawned thread
     // to optimize performance
     // not sure the copy process is more costly than working paralel
     // std::vector<char> tmpbuf(rbuf, rbuf+pos);
 
-    // first MAXTUPLEKEYCNTS * SIZEOFINT bytes refer to key
-    int size_of_key = MAXTUPLEKEYCNTS * SIZEOFINT;
+    // first MAX_TUPLE_KEYS_CNTS * SIZEOFINT bytes refer to key
+    int size_of_key = MAX_TUPLE_KEYS_CNTS * SIZEOFINT;
     int key;
     std::memcpy(&key, rbuf, SIZEOFINT);
     _key = to_string(key);
@@ -85,7 +85,7 @@ void Tuple::Read2Tuple(char* rbuf) {
     // dumb approach
     // TODO: any better alternative?
     char* pos = rbuf + size_of_key;
-    for (int cnt = 0; cnt < MAXTUPLEVALCNTS; cnt++) {
+    for (int cnt = 0; cnt < MAX_TUPLE_VALUES_CNTS; cnt++) {
         int val;
         std::memcpy(&val, pos, SIZEOFINT);
 

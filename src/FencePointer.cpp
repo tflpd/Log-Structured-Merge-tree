@@ -43,3 +43,10 @@ bool FencePointer::AddFence(std::string key) {
 int FencePointer::getIntervalSize() const {
     return _interval_size;
 }
+
+void FencePointer::printFences() {
+    std::cout << "Printing fence pointers: ..." << std::endl;
+    for (int i = 0; i < _fences.size(); ++i) {
+        std::cout << _fences.at(i) << std::endl;
+    }
+}

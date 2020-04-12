@@ -19,9 +19,9 @@
 #define WRITEBUFCAP     4096
 #define MAX_TUPLE_KEYS_CNTS    1
 #define MAX_TUPLE_VALUES_CNTS   2
-#define DEFAULT_FP_INTERV 2 /// THIS HAS TO BE AT LEAST EQUAL TO THE ELEMENTS CAPACITY OF SST AND AN EXACT DIVIDER OF THAT VALUE
-#define DEFAULT_BF_NUM_TUPLES 1024
-#define DEFAULT_BF_BITS_PER_ELEMENT 10
+#define FP_INTERV 10 /// THIS HAS TO BE AT LEAST EQUAL TO THE ELEMENTS CAPACITY OF SST AND AN EXACT DIVIDER OF THAT VALUE
+#define BF_NUM_TUPLES 10 /// FOR NOW this should be a one to one relation to the FP interval
+#define BF_BITS_PER_ELEMENT 1 /// The relation between BF_NUM_TUPLES and BF_BITS_PER_ELEMENT should be ~ 10:1
 #define LEVELS_SIZE_RATIO 2 /// So for example level one runs will be equal to size ratio * level0_runs or equally level one tuples will be equal to size ratio * level0_tuples
 
 #ifdef __linux__
@@ -47,16 +47,16 @@ inline int getMaxRunsBeforeMerge() {
 	return MAX_RUNS_BEFORE_MERGE;
 }
 
-inline int getDefaultFPInterval() {
-    return DEFAULT_FP_INTERV;
+inline int getFPInterval() {
+    return FP_INTERV;
 }
 
-inline int getDefaultBFNumTuples() {
-    return DEFAULT_BF_NUM_TUPLES;
+inline int getBFNumTuples() {
+    return BF_NUM_TUPLES;
 }
 
-inline int getDefaultBFBitsPerElement() {
-    return DEFAULT_BF_BITS_PER_ELEMENT;
+inline int getBFBitsPerElement() {
+    return BF_BITS_PER_ELEMENT;
 }
 
 inline int getBufferBytesSize() {

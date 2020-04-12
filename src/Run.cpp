@@ -10,7 +10,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std:
         _file_pointer(File_pointer), _file_name(FileName) {
 
     _num_tuples = tuples.size();
-    _fence_pointerf = new FencePointer(getDefaultFPInterval());
+    _fence_pointerf = new FencePointer(getFPInterval());
 
     // TODO: Write the values in the SST file and delete them from memory
     int tupleByteSize = getTupleBytesSize();
@@ -28,11 +28,14 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std:
     // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
     fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
 
-    // Add a fence pointer every 500 (default value) keys
+    // Add a fence pointer every FP_INTERV keys
     addFences(tuples);
 
-    // Add Bloom Filters of size 1024 and precision of 10 (bit) (default values) for the keys of the tuples
-    addBloomFilters(tuples, getDefaultBFNumTuples(), getDefaultBFBitsPerElement());
+    // Add Bloom Filters of size BF_NUM_TUPLES and precision of BF_BITS_PER_ELEMENT (bit) for the keys of the tuples
+    addBloomFilters(tuples, getBFNumTuples(), getBFBitsPerElement());
+
+    // TODO: need to write fence ptr & bloomfilter to files as well
+    // TODO: either delete tuples here or out at the Run
 
 
     delete[] wbuf;
@@ -40,39 +43,39 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std:
 
 FileMetaData::FileMetaData(std::string FileName) : _file_name(FileName) {}
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements, 
-        int BF_bits_per_element, std::string FileName):
-        _file_pointer(File_pointer), _file_name(FileName) {
-
-    _num_tuples = tuples.size();
-    _fence_pointerf = new FencePointer(FP_offset_interval);
-
-    int tupleByteSize = getTupleBytesSize();
-    char* wbuf = new char[_num_tuples*tupleByteSize];
-    // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
-
-    for (int i = 0; i < _num_tuples; i++) {
-        int offset = i * tupleByteSize;
-        auto p_tuple = tuples[i];
-        p_tuple->AppendBin2Vec(wbuf + offset);
-    }
-    
-    // built-in C buffering method
-    // can be optimized by writing our own buffer
-    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
-    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
-
-    // Add a fence pointer every FP_offset_interval (default value) keys
-    addFences(tuples);
-
-    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
-    addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
-
-    // TODO: need to write fence ptr & bloomfilter to files as well
-    // TODO: either delete tuples here or out at the Run
-
-    delete[] wbuf;
-}
+//FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
+//        int BF_bits_per_element, std::string FileName):
+//        _file_pointer(File_pointer), _file_name(FileName) {
+//
+//    _num_tuples = tuples.size();
+//    _fence_pointerf = new FencePointer(FP_offset_interval);
+//
+//    int tupleByteSize = getTupleBytesSize();
+//    char* wbuf = new char[_num_tuples*tupleByteSize];
+//    // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
+//
+//    for (int i = 0; i < _num_tuples; i++) {
+//        int offset = i * tupleByteSize;
+//        auto p_tuple = tuples[i];
+//        p_tuple->AppendBin2Vec(wbuf + offset);
+//    }
+//
+//    // built-in C buffering method
+//    // can be optimized by writing our own buffer
+//    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
+//    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
+//
+//    // Add a fence pointer every FP_offset_interval (default value) keys
+//    addFences(tuples);
+//
+//    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
+//    addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
+//
+//    // TODO: need to write fence ptr & bloomfilter to files as well
+//    // TODO: either delete tuples here or out at the Run
+//
+//    delete[] wbuf;
+//}
 
 bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples) {
     _num_tuples = tuples.size();
@@ -133,13 +136,26 @@ void FileMetaData::addFences(const vector<Tuple*>& tuples){
 
 void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element) {
     //assert(tuples.size() >= BF_num_elements && tuples.size()%BF_num_elements == 0);
-
     auto *tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
     _bloom_filters.push_back(tmpBF);
-    for (int i = 1; i < tuples.size()/BF_num_elements; ++i) {
-        tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
-        _bloom_filters.push_back(tmpBF);
+    /// If the number of BFs we need to create is even
+    if (tuples.size() % BF_num_elements == 0){
+        /// Then continue creating as many need after the first
+        for (int i = 1; i < tuples.size()/BF_num_elements; ++i) {
+            tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
+            _bloom_filters.push_back(tmpBF);
+        }
+    }else{
+        /// If the number is odd and we need more than one
+        if (tuples.size()/BF_num_elements >= 1){
+            /// Add as many needed plus one (thus starting from 0) that will just not be full
+            for (int i = 0; i < tuples.size()/BF_num_elements; ++i) {
+                tmpBF = new BF::BloomFilter(BF_num_elements, BF_bits_per_element);
+                _bloom_filters.push_back(tmpBF);
+            }
+        }
     }
+
 
     int j = -1;
     for (int i = 0; i < tuples.size(); ++i) {
@@ -184,6 +200,19 @@ int FileMetaData::getNumTuples() const {
 
 void FileMetaData::printFences() {
     _fence_pointerf->printFences();
+}
+
+/// Returns the offset of the tuple that is the fence right before the target tuple
+/// So the key we are looking for should be max FP_INTERV away
+/// If not found returns -1
+int FileMetaData::getTupleOffset(const char *key) {
+    for (int i = 0; i < _bloom_filters.size(); ++i) {
+        if (_bloom_filters.at(i)->query(key)){
+            int index = _fence_pointerf->GetIndex(key);
+            return index * getTupleBytesSize();
+        }
+    }
+    return -1;
 }
 
 // Divides the provided tuples in files based on the provided parameters, creates that files and puts them there
@@ -267,6 +296,18 @@ vector<Tuple*> Run::GetAllTuples() {
         result.insert(result.end(), tuples.begin(), tuples.end());
     }
     return result;
+}
+
+/// Returns the bytes offset of the tuple that is the fence right before the target tuple
+/// So the key we are looking for should be max FP_INTERV away
+/// If not found returns -1
+int Run::getTupleOffset(const char *key) {
+    for (int i = 0; i < _files.size(); ++i) {
+        int tuple_offset = _files.at(i)->getTupleOffset(key);
+        if (tuple_offset != -1)
+            return tuple_offset;
+    }
+    return -1;
 }
 
 // A very complex thought to avoid recreating files when we merge some runs in a single run let's not thinks about it yet

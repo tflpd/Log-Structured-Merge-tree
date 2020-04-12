@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Log.h"
 
 // Fence pointer for finding offsets of keys inside the sst files OR
 // Fence pointer for finding files indexes of keys in a level

@@ -16,7 +16,7 @@ public:
     ~LSM_T();
 
     Tuple* Search(std::string key);
-    Tuple* Search(std::string start, std::string end);
+    void Search(std::string start, std::string end, vector<Tuple*>& ret);
     bool Insert(std::string key, Value val);
     bool Delete(std::string key);
 

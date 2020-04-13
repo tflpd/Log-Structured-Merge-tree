@@ -30,5 +30,8 @@ int main(int argc, char **argv)
 
     db.put(8, v3);
 
+
+    auto v = db.get(4);
+
     return 0;
 }

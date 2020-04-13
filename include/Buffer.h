@@ -24,6 +24,9 @@ public:
     bool IsFull() const;
 
     void print() const;
+
+    bool Scan(int start, int end, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
 };
 
 // #include "Buffer.cpp"

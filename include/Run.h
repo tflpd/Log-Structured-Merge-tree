@@ -41,6 +41,8 @@ public:
     std::string getFileName() const;
     void printFences();
 
+    void Collect(int start, int end, std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
+
 private:
     FILE *_file_pointer;
     std::string _file_name;
@@ -76,6 +78,8 @@ public:
     vector<Tuple*> GetAllTuples();
 
     bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
+    bool Scan(int start, int end, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits); 
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

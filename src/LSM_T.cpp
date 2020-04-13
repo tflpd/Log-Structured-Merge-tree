@@ -74,14 +74,15 @@ bool LSM_T::Insert(std::string key, Value val) {
 }
 
 bool LSM_T::Delete(std::string key) {
-    auto ret = Search(key);
-    if (ret == nullptr) {
-        // may need to release ret before exit
-        // delete ret;
-        return false;
-    }
+    // auto ret = Search(key);
+    // if (ret == nullptr) {
+    //     // may need to release ret before exit
+    //     // delete ret;
+    //     return false;
+    // }
 
-    return Insert(key, DEL_PLACEHOLDER);
+    // return Insert(key, DEL_PLACEHOLDER);
+    return true;
 }
 
 
@@ -95,9 +96,41 @@ Tuple* LSM_T::Search(std::string key) {
     return nullptr;
 }
 
-Tuple* LSM_T::Search(std::string start, std::string end) {
+void re_order(std::vector<Tuple*>& tmpret, std::vector<Tuple*>& ret) {
+    for (auto ptr : tmpret)
+        if (ptr != nullptr) 
+            ret.push_back(ptr);
+}
 
-    return nullptr;
+void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret) {
+    int iStart = std::stoi(start), iEnd = std::stoi(end);
+    int size = iEnd - iStart + 1;
+    int newStart = int(0), newEnd = int(0);
+    std::vector<bool> checkbits(size, false);
+    std::vector<Tuple*> tmpret(size, nullptr);
+
+    bool finished = _buf->Scan(iStart, iEnd, tmpret, checkbits);
+    if (finished) {
+        re_order(tmpret, ret);
+        return;
+    }
+
+    // if not finished, re-init lookup range
+    FindStartEndPoint(iStart, iEnd, checkbits, newStart, newEnd);
+    
+    for (auto level = _levels.begin(); level != _levels.end(); level++) {
+        iStart = newStart; iEnd = newEnd;
+        finished = level->Scan(iStart, iEnd, tmpret, checkbits);
+        if (finished) {
+            re_order(tmpret, ret);
+            return;
+        }
+
+        // if not finished, re-init lookup range
+        FindStartEndPoint(iStart, iEnd, checkbits, newStart, newEnd);
+    }
+
+    re_order(tmpret, ret);    
 }
 
 LSM_T::~LSM_T() {}

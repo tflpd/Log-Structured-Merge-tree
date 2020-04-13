@@ -29,24 +29,22 @@ void DB::put(int key, Value val)
 }
 
 
-std::vector<Value> DB::scan()
+void DB::scan(std::vector<Tuple*>& ret)
 {
-   std::vector<Value> return_vector;
    // for (auto pair: table)
    // {
    //     return_vector.push_back(pair.second);
    // }
 
-   return return_vector;
 }
 
 
-std::vector<Value> DB::scan(int min_key, int max_key)
+void DB::scan(int min_key, int max_key, std::vector<Tuple*>& ret)
 {
-    std::vector<Value> return_vector;
-    // auto tuples = table->Search(min_key, max_key);
+    string start(to_string(min_key)), end(to_string(max_key));
 
-    return return_vector;
+    // lsm-t assure the result is ordered
+    table->Search(start, end, ret);
 }
 
 
@@ -62,28 +60,28 @@ void DB::show_buf() const
 }
 
 
-std::vector<Value> DB::execute_op(Operation op)
-{
-    std::vector<Value> results;
-    if (op.type == GET)
-    {
-        results.push_back(this->get(op.key));
-    }
-    else if (op.type == PUT)
-    {
-        this->put(op.key, Value(op.args));
-    }
-    else if (op.type == SCAN)
-    {
-        results = this->scan(op.key, op.args[0]);
-    }
-    else if (op.type == DELETE)
-    {
-        this->del(op.key);
-    }
+// std::vector<Value> DB::execute_op(Operation op)
+// {
+//     std::vector<Value> results;
+//     if (op.type == GET)
+//     {
+//         results.push_back(this->get(op.key));
+//     }
+//     else if (op.type == PUT)
+//     {
+//         this->put(op.key, Value(op.args));
+//     }
+//     else if (op.type == SCAN)
+//     {
+//         results = this->scan(op.key, op.args[0]);
+//     }
+//     else if (op.type == DELETE)
+//     {
+//         this->del(op.key);
+//     }
 
-    return results;
-}
+//     return results;
+// }
 
 
 // bool DB::load_data_file(std::string & fname)

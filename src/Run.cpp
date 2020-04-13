@@ -112,6 +112,13 @@ FileMetaData::~FileMetaData() {
 //
 //}
 
+void FileMetaData::Collect(int start, int end, 
+    std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+    
+    // check [start, end] intersect 
+    
+}   
+
 std::string FileMetaData::getFileName() const {
     return _file_name;
 }
@@ -267,6 +274,23 @@ vector<Tuple*> Run::GetAllTuples() {
         result.insert(result.end(), tuples.begin(), tuples.end());
     }
     return result;
+}
+
+
+bool Run::Scan(int start, int end, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+    int newStart = int(0),  newEnd = int(0);
+
+    // due to the property of Run, it's safe to make an assertion that
+    // no dupulicate keys exist in the same Run. we may only iterate through
+    // FMD and  ask BF & FP in order to collect satisfied tuples
+    for (auto pFmd : _files) 
+        pFmd->Collect(start, end, ret, checkbits);
+
+    // check if all keys in [start, end] have been collected or not
+    FindStartEndPoint(start, end, checkbits, newStart, newEnd);
+    if (newStart > newEnd) return true;
+    return false;
 }
 
 // A very complex thought to avoid recreating files when we merge some runs in a single run let's not thinks about it yet

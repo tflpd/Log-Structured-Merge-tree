@@ -21,6 +21,8 @@ public:
     bool _AddMergeRuns(vector<Tuple*>& tuples);
 
     bool ReadyMerge() const;
+    bool Scan(int start, int end, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits); 
 
 private:
     bool _Clear();

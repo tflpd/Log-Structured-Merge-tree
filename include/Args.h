@@ -71,4 +71,35 @@ inline int getLevelSizeRatio() {
     return LEVELS_SIZE_RATIO;
 }
 
+inline bool AllTrue(std::vector<bool>& checkbits) {
+	bool found = true;
+	for (auto exist : checkbits)
+		found &= exist;
+	return found;
+}
+
+// @vector<bool> checkbits:
+// this vector can be regarded as a list of buckets to indicate
+// if any elements in [start, end] has been found previously
+// ---------------------------------------------------------
+// This function is used to compute the actual range [X, Y]
+// that is needed to scan in current layer with prior knowledge that some buckets
+// in checkbits has filled out
+void FindStartEndPoint(int start, int end, 
+	std::vector<bool>& checkbits, int& newStart, int& newEnd) {
+	// found the first "hole"(first item with false) in checkbits
+    // scan from then on
+    int startPoint = start, endPoint = end;
+    for (auto it = checkbits.begin(); it != checkbits.end(); it++) {
+    	if (*it) startPoint++;
+    }
+
+    for (auto rit = checkbits.rbegin(); rit != checkbits.rend(); rit++) {
+    	if (*rit) endPoint--;
+    }
+
+    newStart = startPoint;
+    newEnd = endPoint;
+}
+
 #endif

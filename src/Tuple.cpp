@@ -19,6 +19,11 @@ Tuple::Tuple() {
     _value = Value();
 }
 
+Tuple::Tuple(Tuple& other) {
+    _key = other.GetKey();
+    _value = other.GetValue();
+}
+
 Tuple::~Tuple() {}
 
 void Tuple::PrintTuple() {

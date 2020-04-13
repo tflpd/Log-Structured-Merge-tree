@@ -34,8 +34,8 @@ public:
 
     Value get(int key);
     void put(int key, Value val);
-   std::vector<Value> scan();
-    std::vector<Value> scan(int min_key, int max_key);
+    void scan(std::vector<Tuple*>& ret);
+    void scan(int min_key, int max_key, std::vector<Tuple*>& ret);
     void del(int key);
 
     void show_buf() const;
@@ -46,7 +46,7 @@ public:
 
     // bool load_data_file(std::string & fname);
 
-    std::vector<Value> execute_op(Operation op);
+    // std::vector<Value> execute_op(Operation op);
 
 private:
     std::fstream file;

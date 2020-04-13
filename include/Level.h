@@ -6,6 +6,7 @@
 #define LSM_TREE_LEVEL_H
 
 #include <vector>
+#include "Args.h"
 #include "Run.h"
 #include "Parameters.h"
 #include "Buffer.h"
@@ -21,6 +22,8 @@ public:
     bool _AddMergeRuns(vector<Tuple*>& tuples);
 
     bool ReadyMerge() const;
+    bool Scan(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits); 
 
 private:
     bool _Clear();

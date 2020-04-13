@@ -47,5 +47,32 @@ std::vector<Tuple*> Buffer::GetTuples() {
     return tuples;
 }
 
+bool Buffer::Scan(const Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+	int iStart = searchRange._begin, iEnd = searchRange._end;
+	auto retIt = ret.begin();
+	auto it = checkbits.begin();
+	bool finished = true;
 
+	// for current version, in-memory buffer is just an array and even not ordered
+	// no special data structure used
+	// we may move to skip list or any data structures that have a Log(n) search & insertion time
+	// in the future
+	for (auto pTuple : tuples) {
+		int iKey = std::stoi(pTuple->GetKey());
+		if (iKey >= iStart && iKey <= iEnd) {
+			int diff = iKey - iStart;
+			// deep copy it to return
+			// since you never know when the buffer would release the data
+			auto pData = new Tuple(*pTuple);
+			*(retIt+diff) = pData;
+			*(it + diff) = true;			
+		} else {
+			// even one key is lacked, we have to go deep into level to look for it
+			finished &= false;
+		}
+	}
+
+	return finished;
+}
 

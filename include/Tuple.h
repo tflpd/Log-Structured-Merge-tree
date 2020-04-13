@@ -16,9 +16,13 @@ public:
     bool visible = true;
 
     Value() {}
-    Value(bool _visible) {visible = _visible;}
+    // Value(bool _visible) {visible = _visible;}
     Value(std::vector<int> _items) { items = _items;}
-
+    Value(const Value& other) {
+        visible = other.visible;
+        items.insert(items.end(), other.items.begin(), other.items.end());
+    }
+    
     bool operator ==(Value const & other) const
     {
         return (visible == other.visible) && (items == other.items);
@@ -34,6 +38,7 @@ public:
     Tuple(std::string key, Value val);
     ~Tuple();
 
+    Tuple(Tuple& other);
     Tuple();
 //    inline void SetKey(const std::string key){
 //        this->_key = key;

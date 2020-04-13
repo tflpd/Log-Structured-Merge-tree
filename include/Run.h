@@ -10,6 +10,7 @@
 #include "BloomFilter.h"
 #include "Tuple.h"
 #include "Parameters.h"
+#include "Args.h"
 #include <vector>
 
 struct FileMetaData
@@ -41,6 +42,9 @@ public:
     std::string getFileName() const;
     void printFences();
 
+    void Collect(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
+
 private:
     FILE *_file_pointer;
     std::string _file_name;
@@ -53,6 +57,11 @@ private:
     void addFences(const vector<Tuple*>& tuples);
     // Adds/creates the BFs (with specific parameters) of this file consuming the provided tuples
     void addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element);
+
+    void fastBFIndex(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& suggestRange);
+    void fastFPIndex(const Range& userAskedRange, Range& suggestRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& offset);
 };
 
 
@@ -76,6 +85,8 @@ public:
     vector<Tuple*> GetAllTuples();
 
     bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
+    bool Scan(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits); 
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

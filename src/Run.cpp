@@ -108,9 +108,109 @@ FileMetaData::~FileMetaData() {
     delete _fence_pointerf;
 }
 
-//void FileMetaData::flush() {
-//
-//}
+void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& suggestRange) {
+    auto it = checkbits.begin();
+    auto pBF = _bloom_filters.at(0);
+
+    int startIndex = searchRange._begin - userAskedRange._begin;
+    int endIndex = searchRange._end - userAskedRange._begin;
+    int len = endIndex - startIndex + 1;
+    int startpoint, endpoint;
+
+    // can be refined, no need to do two passes
+    for (int index = startIndex; index <= endIndex; index++) {
+        int queryKey = userAskedRange._begin + index; 
+        std::string sKey = std::to_string(queryKey);
+
+        if (!checkbits.at(index) &&
+            pBF->query(sKey)) {
+            startpoint = queryKey;
+            break;
+        }
+    }
+
+    for (int index = endIndex; index >= startIndex; index--) {
+        int queryKey = userAskedRange._begin + index;
+        std::string sKey = std::to_string(queryKey);
+
+        if (!checkbits.at(index) &&
+            pBF->query(sKey)) {
+            endpoint = queryKey;
+            break;
+        }
+    }
+
+    suggestRange._begin = startpoint;
+    suggestRange._end = endpoint;
+}
+
+void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& offset) {
+
+    const char* startkey = std::to_string(suggestRange._begin).c_str();
+    const char* endkey = std::to_string(suggestRange._end).c_str();
+
+    int startOffset;
+    int endOffset;
+
+    int minKey = _fence_pointerf->GetMin();
+    int maxKey = _fence_pointerf->GetMax();
+
+    int start = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
+    int end = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
+
+    // check if intersects
+    if (start <= end) {
+
+    }
+}
+
+void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,  
+    std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+    Range suggestRange(0, 0);
+    fastBFIndex(userAskedRange, searchRange, ret, checkbits, suggestRange);
+
+    // need to do disk IO as BF ensure us there will be at least one value matches 
+    // our needs
+    // also, if read == true, startpoint is surely larger or equal to endpoint
+    if (suggestRange._begin <= suggestRange._end) {
+        Range offset(0, 0);
+        fastFPIndex(userAskedRange, suggestRange, ret, checkbits, offset);
+
+        int start = offset._begin, end = offset._end;
+        int interval = _fence_pointerf->getIntervalSize();
+        if (start > end) return; // no satisfied data in this file
+
+        int byteStart = start;
+        int byteEnd = (start == end) ? byteStart + interval : end;
+        int size = byteEnd - byteStart;
+
+        FILE* fp = fopen(_file_name.c_str(), "rb");
+        char* tmpbuf = new char[size];
+        fseek(fp, byteStart, SEEK_SET);
+        fread(tmpbuf, 1, size, fp);
+        fclose(fp);
+
+        int tupleSize = getTupleBytesSize();
+        int _num_tuples = size / tupleSize;
+
+        for (int num = 0; num < _num_tuples; num++) {
+            int offset = num * tupleSize;
+            auto p_tuple = new Tuple();
+            p_tuple->Read2Tuple(tmpbuf + offset);
+            int key = std::stoi(p_tuple->GetKey());
+
+            if (key >= userAskedRange._begin && key <= userAskedRange._end
+                && !checkbits[(key - userAskedRange._begin)]) {
+                checkbits[(key - userAskedRange._begin)];
+                ret.push_back(p_tuple);
+            } else
+                delete p_tuple;
+        }
+
+    }
+}   
 
 std::string FileMetaData::getFileName() const {
     return _file_name;
@@ -267,6 +367,21 @@ vector<Tuple*> Run::GetAllTuples() {
         result.insert(result.end(), tuples.begin(), tuples.end());
     }
     return result;
+}
+
+
+bool Run::Scan(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+    // due to the property of Run, it's safe to make an assertion that
+    // no dupulicate keys exist in the same Run. we may only iterate through
+    // FMD and  ask BF & FP in order to collect satisfied tuples
+    for (auto pFmd : _files) 
+        pFmd->Collect(userAskedRange, searchRange, ret, checkbits);
+
+    // check if all keys in [start, end] have been collected or not
+    ShrinkSearchRange(userAskedRange, searchRange, checkbits);
+    if (searchRange._begin > searchRange._end) return true;
+    return false;
 }
 
 // A very complex thought to avoid recreating files when we merge some runs in a single run let's not thinks about it yet

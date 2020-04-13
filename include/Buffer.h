@@ -6,6 +6,7 @@
 #define LSM_TREE_BUFFER_H
 
 #include "Tuple.h"
+#include "Args.h"
 #include <vector>
 
 class Buffer{
@@ -24,6 +25,9 @@ public:
     bool IsFull() const;
 
     void print() const;
+
+    bool Scan(const Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
 };
 
 // #include "Buffer.cpp"

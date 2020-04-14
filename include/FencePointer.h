@@ -26,12 +26,8 @@ public:
 
     void printFences();
 
-<<<<<<< HEAD
     int GetMin() const;
     int GetMax() const;
-
-=======
->>>>>>> 5d598aa2c0c3348c276f3e3f270365d4858612f8
 
 private:
     std::vector<std::string> _fences;

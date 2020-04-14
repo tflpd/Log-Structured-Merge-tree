@@ -1,6 +1,7 @@
 #ifndef LSM_TREE_ARGS_H
 #define LSM_TREE_ARGS_H
 
+
 #ifndef NDEBUG
 	// values dedicated for debugging
 	#define SST_SIZE     48 /// Size of an sst file in BYTES
@@ -31,6 +32,7 @@
 #define DEL_PLACEHOLDER  INT_MAX
 
 #include <vector>
+#include <iostream>
 
 /* size of bytes */
 inline int getSSTSize() {

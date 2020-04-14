@@ -306,11 +306,11 @@ void FileMetaData::printFences() {
 /// So the key we are looking for should be max FP_INTERV away
 /// If not found returns -1
 int FileMetaData::getTupleOffset(const char *key) {
-    DEBUG_LOG(std::string("PRIN PRIN PERASA BF") + "");
+    //DEBUG_LOG(std::string("PRIN PRIN PERASA BF") + "");
     for (int i = 0; i < _bloom_filters.size(); ++i) {
-        DEBUG_LOG(std::string("PRIN PERASA BF") + "");
+        //DEBUG_LOG(std::string("PRIN PERASA BF") + "");
         if (_bloom_filters.at(i)->query(key)){
-            DEBUG_LOG(std::string("PERASA BF") + "");
+            //DEBUG_LOG(std::string("PERASA BF") + "");
             int index = _fence_pointerf->GetIndex(key);
             if (index >= 0){
                 return index * getTupleBytesSize();

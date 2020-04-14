@@ -12,11 +12,13 @@ FencePointer::~FencePointer() {
 }
 
 int FencePointer::GetMin() const {
-    return 0;
+    assert(!_fences.empty());
+    return atoi(_fences.back().c_str());
 }
 
 int FencePointer::GetMax() const {
-    return 0;
+    assert(!_fences.empty());
+    return atoi(_fences.front().c_str());
 }
 
 // Returns the index(from which then the offset can be calculated) of the key "key" in this file. If does not exist -1 OR

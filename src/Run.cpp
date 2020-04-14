@@ -306,10 +306,17 @@ void FileMetaData::printFences() {
 /// So the key we are looking for should be max FP_INTERV away
 /// If not found returns -1
 int FileMetaData::getTupleOffset(const char *key) {
+    DEBUG_LOG(std::string("PRIN PRIN PERASA BF") + "");
     for (int i = 0; i < _bloom_filters.size(); ++i) {
+        DEBUG_LOG(std::string("PRIN PERASA BF") + "");
         if (_bloom_filters.at(i)->query(key)){
+            DEBUG_LOG(std::string("PERASA BF") + "");
             int index = _fence_pointerf->GetIndex(key);
-            return index * getTupleBytesSize();
+            if (index >= 0){
+                return index * getTupleBytesSize();
+            }else{
+                return -1;
+            }
         }
     }
     return -1;
@@ -380,10 +387,11 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
 
     FILE* fp = fopen(fileName.c_str(), "wb");
     auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
-    tmpFMD->printFences();
+    //tmpFMD->printFences();
     fclose(fp);
 
     _files.push_back(tmpFMD);
+    //DEBUG_LOG(std::string("Requesting byte offset for key 9") + std::to_string(getTupleOffset("9")));
     return true;
 }
 
@@ -418,7 +426,7 @@ bool Run::Scan(const Range& userAskedRange, Range& searchRange,
 int Run::getTupleOffset(const char *key) {
     for (int i = 0; i < _files.size(); ++i) {
         int tuple_offset = _files.at(i)->getTupleOffset(key);
-        if (tuple_offset != -1)
+        if (tuple_offset >= 0)
             return tuple_offset;
     }
     return -1;

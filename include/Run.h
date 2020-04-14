@@ -23,8 +23,8 @@ public:
     FileMetaData(std::string FileName);
 
     // Constructor with parameterizable fence pointers intervals and bloom filter values capacity and precision
-    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-                 int BF_bits_per_element, std::string FileName);
+//    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
+//                 int BF_bits_per_element, std::string FileName);
 
     ~FileMetaData();
 
@@ -41,6 +41,7 @@ public:
     int getNumTuples() const;
     std::string getFileName() const;
     void printFences();
+    int getTupleOffset(const char *key);
 
     void Collect(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
@@ -86,7 +87,8 @@ public:
 
     bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
     bool Scan(const Range& userAskedRange, Range& searchRange, 
-        std::vector<Tuple*>& ret, std::vector<bool>& checkbits); 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
+    int getTupleOffset(const char *key);
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

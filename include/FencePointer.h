@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Log.h"
 
 // Fence pointer for finding offsets of keys inside the sst files OR
 // Fence pointer for finding files indexes of keys in a level
@@ -25,9 +26,12 @@ public:
 
     void printFences();
 
+<<<<<<< HEAD
     int GetMin() const;
     int GetMax() const;
 
+=======
+>>>>>>> 5d598aa2c0c3348c276f3e3f270365d4858612f8
 
 private:
     std::vector<std::string> _fences;

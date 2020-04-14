@@ -26,15 +26,18 @@ int FencePointer::GetMax() const {
 // In order to get the offset the returned result needs to be multiplied with the pre set interval size
 // TODO: This may be somehow optimized in the future to avoid the two ifs
 int FencePointer::GetIndex(const char *key) {
+    int uint_key = atoi(key);
+    assert(uint_key >= 0);
     for (int i = 0; i < _fences.size(); ++i) {
         // TODO: Discuss about key's type and conversion
         int fence_number = atoi(_fences[i].c_str());
-        if (atoi(key) <= fence_number) {
-            if (i == _fences.size() - 1){
-                return i*_interval_size;
-            }
-            if (key < _fences[i])
+        //std::cout << "bout to compare " << std::to_string(uint_key) << " with " << std::to_string(fence_number) << std::endl;
+        if (uint_key <= fence_number) {
+            if (uint_key < fence_number)
                 return (i - 1)*_interval_size;
+
+            if (i == _fences.size() - 1 && uint_key == fence_number)
+                return i*_interval_size;
         }
     }
     return -1;
@@ -55,8 +58,9 @@ int FencePointer::getIntervalSize() const {
 }
 
 void FencePointer::printFences() {
-    std::cout << "Printing fence pointers: ..." << std::endl;
+    //std::cout << "Printing fence pointers: ..." << std::endl;
     for (int i = 0; i < _fences.size(); ++i) {
-        std::cout << _fences.at(i) << std::endl;
+        DEBUG_LOG(std::string("Printing fence pointer: ... ") + std::string(_fences.at(i)));
+        //std::cout << _fences.at(i) << std::endl;
     }
 }

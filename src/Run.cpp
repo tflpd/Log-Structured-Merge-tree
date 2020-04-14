@@ -197,15 +197,16 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
         for (int num = 0; num < _num_tuples; num++) {
             int offset = num * tupleSize;
-            // auto p_tuple = new Tuple();
-            // p_tuple->Read2Tuple(tmpbuf + offset);
+            auto p_tuple = new Tuple();
+            p_tuple->Read2Tuple(tmpbuf + offset);
+            int key = std::stoi(p_tuple->GetKey());
 
-            // if () {
-            //     ret.push_back(p_tuple)
-
-            // }
-
-            // ret.push_back(p_tuple);
+            if (key >= userAskedRange._begin && key <= userAskedRange._end
+                && !checkbits[(key - userAskedRange._begin)]) {
+                checkbits[(key - userAskedRange._begin)];
+                ret.push_back(p_tuple);
+            } else
+                delete p_tuple;
         }
 
     }

@@ -11,6 +11,14 @@ FencePointer::~FencePointer() {
 
 }
 
+int FencePointer::GetMin() const {
+    return 0;
+}
+
+int FencePointer::GetMax() const {
+    return 0;
+}
+
 // Returns the index(from which then the offset can be calculated) of the key "key" in this file. If does not exist -1 OR
 // Returns the (file) index of the key "key" in this level. If does not exist -1
 // In order to get the offset the returned result needs to be multiplied with the pre set interval size

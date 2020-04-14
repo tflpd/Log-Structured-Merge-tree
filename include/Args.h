@@ -30,6 +30,8 @@
 #define TERMINATION      INT_MIN
 #define DEL_PLACEHOLDER  INT_MAX
 
+#include <vector>
+
 /* size of bytes */
 inline int getSSTSize() {
 	return SST_SIZE * CARRY * CARRY; // from MB to B
@@ -78,28 +80,48 @@ inline bool AllTrue(std::vector<bool>& checkbits) {
 	return found;
 }
 
+struct Range {
+	int _begin;
+	int _end;
+	Range() {}
+	Range(int begin, int end) : _begin(begin), _end(end) {}
+	Range(const Range& other) {
+		_begin = other._begin;
+		_end = other._end;
+	}
+};
+
 // @vector<bool> checkbits:
 // this vector can be regarded as a list of buckets to indicate
 // if any elements in [start, end] has been found previously
+// @userAskedRange:
+// 		search range asked by client, defined at Database.cpp
+// @searchRange:
+//	    current shrinked search range during processing progress, intending to 
+//      avoid overheads 
 // ---------------------------------------------------------
 // This function is used to compute the actual range [X, Y]
 // that is needed to scan in current layer with prior knowledge that some buckets
 // in checkbits has filled out
-void FindStartEndPoint(int start, int end, 
-	std::vector<bool>& checkbits, int& newStart, int& newEnd) {
+static void ShrinkSearchRange(const Range& userAskedRange, Range& searchRange, 
+	std::vector<bool>& checkbits) {
 	// found the first "hole"(first item with false) in checkbits
     // scan from then on
-    int startPoint = start, endPoint = end;
-    for (auto it = checkbits.begin(); it != checkbits.end(); it++) {
+    int startPoint = userAskedRange._begin, endPoint = userAskedRange._end;
+    for (auto it = checkbits.begin(); it != checkbits.end(); it++) 
     	if (*it) startPoint++;
-    }
+ 
 
-    for (auto rit = checkbits.rbegin(); rit != checkbits.rend(); rit++) {
+    for (auto rit = checkbits.rbegin(); rit != checkbits.rend(); rit++) 
     	if (*rit) endPoint--;
-    }
 
-    newStart = startPoint;
-    newEnd = endPoint;
+    searchRange._begin = startPoint;
+    searchRange._end = endPoint;
+
+    std::string log = "newly shrinked search range is from [" + 
+    	std::to_string(startPoint) + " ," + std::to_string(endPoint) + "]";
+    // DEBUG_LOG(log);
+
 }
 
 #endif

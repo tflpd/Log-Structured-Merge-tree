@@ -179,19 +179,15 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
     return true;
 }
 
-bool Level::Scan(int start, int end, std::vector<Tuple*>& ret, 
-    std::vector<bool>& checkbits) {
-    int newStart = int(0), newEnd = int(0);
-    int curStart = start, curEnd = end;
+bool Level::Scan(const Range& userAskedRange, Range& searchRange, 
+        std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
     bool finished = false;
 
     // newly added data are at the back of the vector, thus check them in a reversed order
     for (auto rit = _runs.rbegin(); rit != _runs.rend(); rit++) {
-        finished = rit->Scan(curStart, curEnd, ret, checkbits);
-        if (finished) return finished;
-
-        FindStartEndPoint(curStart, curEnd, checkbits, newStart, newEnd);
-        curStart = newStart; curEnd = newEnd;
+        finished = rit->Scan(userAskedRange, searchRange, ret, checkbits);
+        if (finished)
+            break;
     }
 
     return finished;

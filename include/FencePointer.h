@@ -25,6 +25,9 @@ public:
 
     void printFences();
 
+    int GetMin() const;
+    int GetMax() const;
+
 
 private:
     std::vector<std::string> _fences;

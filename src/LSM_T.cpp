@@ -105,32 +105,33 @@ void re_order(std::vector<Tuple*>& tmpret, std::vector<Tuple*>& ret) {
 void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret) {
     int iStart = std::stoi(start), iEnd = std::stoi(end);
     int size = iEnd - iStart + 1;
-    int newStart = int(0), newEnd = int(0);
+
+    Range* userAskedRange = new Range(iStart, iEnd);
+    Range* searchRange = new Range(iStart, iEnd);
+
     std::vector<bool> checkbits(size, false);
     std::vector<Tuple*> tmpret(size, nullptr);
 
-    bool finished = _buf->Scan(iStart, iEnd, tmpret, checkbits);
+    bool finished = _buf->Scan(*searchRange, tmpret, checkbits);
     if (finished) {
         re_order(tmpret, ret);
+        delete userAskedRange;
+        delete searchRange;
         return;
     }
 
     // if not finished, re-init lookup range
-    FindStartEndPoint(iStart, iEnd, checkbits, newStart, newEnd);
+    ShrinkSearchRange(*userAskedRange, *searchRange, checkbits);
     
     for (auto level = _levels.begin(); level != _levels.end(); level++) {
-        iStart = newStart; iEnd = newEnd;
-        finished = level->Scan(iStart, iEnd, tmpret, checkbits);
-        if (finished) {
-            re_order(tmpret, ret);
-            return;
-        }
-
-        // if not finished, re-init lookup range
-        FindStartEndPoint(iStart, iEnd, checkbits, newStart, newEnd);
+        finished = level->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
+        if (finished)
+            break;
     }
 
-    re_order(tmpret, ret);    
+    re_order(tmpret, ret);
+    delete userAskedRange;
+    delete searchRange;    
 }
 
 LSM_T::~LSM_T() {}

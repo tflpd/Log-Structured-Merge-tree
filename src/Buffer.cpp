@@ -47,9 +47,9 @@ std::vector<Tuple*> Buffer::GetTuples() {
     return tuples;
 }
 
-bool Buffer::Scan(int start, int end, 
+bool Buffer::Scan(const Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
-	int iStart = start, iEnd = end;
+	int iStart = searchRange._begin, iEnd = searchRange._end;
 	auto retIt = ret.begin();
 	auto it = checkbits.begin();
 	bool finished = true;

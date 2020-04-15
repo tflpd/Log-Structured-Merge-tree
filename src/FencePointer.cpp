@@ -12,12 +12,10 @@ FencePointer::~FencePointer() {
 }
 
 int FencePointer::GetMin() const {
-    assert(!_fences.empty());
     return atoi(_fences.back().c_str());
 }
 
 int FencePointer::GetMax() const {
-    assert(!_fences.empty());
     return atoi(_fences.front().c_str());
 }
 
@@ -27,7 +25,6 @@ int FencePointer::GetMax() const {
 // TODO: This may be somehow optimized in the future to avoid the two ifs
 int FencePointer::GetIndex(const char *key) {
     int uint_key = atoi(key);
-    assert(uint_key >= 0);
     for (int i = 0; i < _fences.size(); ++i) {
         // TODO: Discuss about key's type and conversion
         int fence_number = atoi(_fences[i].c_str());

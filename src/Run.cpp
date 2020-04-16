@@ -4,7 +4,7 @@
 #include <fstream>
 #include <stdio.h>
 // #include <fcntl.h>
-// #include <unistd.h>
+#include <unistd.h>
 
 FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName):
         _file_pointer(File_pointer), _file_name(FileName) {
@@ -115,6 +115,9 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& suggestRange) {
     auto it = checkbits.begin();
     auto pBF = _bloom_filters.at(0);
+    std::string l = _file_name + " -> The search range is: [" + to_string(searchRange._begin) +
+        ", " + to_string(searchRange._end) + "]";
+    DEBUG_LOG(l);
 
     int startIndex = searchRange._begin - userAskedRange._begin;
     int endIndex = searchRange._end - userAskedRange._begin;
@@ -146,34 +149,65 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
 
     suggestRange._begin = startpoint;
     suggestRange._end = endpoint;
+    std::string log = _file_name + " -> The suggested min key of BF is: #" + to_string(startpoint) +
+        ", the suggested max key of BF is: #" + to_string(endpoint);
+
+    DEBUG_LOG(log);
 }
 
 void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& offset) {
 
-    const char* startkey = std::to_string(suggestRange._begin).c_str();
-    const char* endkey = std::to_string(suggestRange._end).c_str();
-
-    int startOffset;
-    int endOffset;
+    // init with an invalid range that'd let system know this case
+    // should be skipped
+    int start = 0;
+    int end = -1;
 
     int minKey = _fence_pointerf->GetMin();
     int maxKey = _fence_pointerf->GetMax();
+    std::string log1 = _file_name + " -> The min key of FP is: #" + to_string(minKey) +
+        ", the max key of this FP is: #" + to_string(maxKey);
 
-    int start = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
-    int end = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
+    int startKey = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
+    int endKey = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
+    std::string log2 = _file_name + " -> After doing intersection, the suggested start key of FP is: #" + to_string(startKey) +
+        ", the suggested max key of this FP is: #" + to_string(endKey);
+
+    DEBUG_LOG(log1);
+    DEBUG_LOG(log2);
 
     // check if intersects
-    if (start <= end) {
+    if (startKey <= endKey) {
+        const char* ssk = std::to_string(startKey).c_str();
+        const char* sek = std::to_string(endKey).c_str();
 
+        int offsetStart = getTupleOffset(ssk);
+        int offsetEnd = getTupleOffset(sek);
+
+        // shouldn't get -1 here, as we ensure they lie between [minKey, maxKey].
+        // but make a KEYLOG here in case of any exceptions
+        if (offsetStart != -1 && offsetEnd != -1) {
+            start = offsetStart;
+            // how many tuples for an interval * tuple per byte 
+            end = offsetEnd + getFPInterval() * getTupleBytesSize();
+        } else {
+            std::string log = _file_name + " -> unexpected err occur when startKey = " + std::to_string(startKey) +
+                " and endKey = " + std::to_string(endKey);
+            KEY_LOG(log);
+        }
     }
+
+    offset._begin = start;
+    offset._end = end;
+    std::string log3 = _file_name + " -> Offset given by this FP is: [" + std::to_string(start) +
+                " ," + std::to_string(end) + "]";
+    DEBUG_LOG(log3);
 }
 
 void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,  
     std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
     Range suggestRange(0, 0);
     fastBFIndex(userAskedRange, searchRange, ret, checkbits, suggestRange);
-
     // need to do disk IO as BF ensure us there will be at least one value matches 
     // our needs
     // also, if read == true, startpoint is surely larger or equal to endpoint
@@ -183,6 +217,7 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
         int start = offset._begin, end = offset._end;
         int interval = _fence_pointerf->getIntervalSize();
+
         if (start > end) return; // no satisfied data in this file
 
         int byteStart = start;
@@ -206,8 +241,8 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
                 && !checkbits[(key - userAskedRange._begin)]) {
-                checkbits[(key - userAskedRange._begin)];
-                ret.push_back(p_tuple);
+                checkbits[(key - userAskedRange._begin)] = true;
+                ret[(key - userAskedRange._begin)] = p_tuple;
             } else
                 delete p_tuple;
         }
@@ -365,7 +400,12 @@ Run::~Run() {
 bool Run::DeleteFMD() {
     for (auto pFile : _files) {
         const char* fileName = pFile->getFileName().c_str();
+
+#ifdef __linux__
+        unlink(fileName);
+#else
         remove(fileName); // system call
+#endif
     }
 
     return true;

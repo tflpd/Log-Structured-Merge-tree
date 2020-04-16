@@ -32,9 +32,8 @@ public:
     DB();
     ~DB();
 
-    Value get(int key);
+    Tuple* get(int key);
     void put(int key, Value val);
-    void scan(std::vector<Tuple*>& ret);
     void scan(int min_key, int max_key, std::vector<Tuple*>& ret);
     void del(int key);
 

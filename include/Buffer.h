@@ -26,7 +26,7 @@ public:
 
     void print() const;
 
-    bool Scan(const Range& searchRange, 
+    bool Scan(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
 };
 

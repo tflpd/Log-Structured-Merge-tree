@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Args.h"
 // #include "Database.hpp"
 
 class Value
@@ -53,6 +54,10 @@ public:
         return _value;
     }
     std::string ToString() const;
+
+    inline bool IsDelMarker() const {
+        return *_value.items.begin() == TERMINATION;
+    }
     
     void AppendBin2Vec(char* wbuf) const;
     void Read2Tuple(char* rbuf);

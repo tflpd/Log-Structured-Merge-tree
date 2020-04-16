@@ -16,10 +16,22 @@ DB::~DB() {
 }
 
 
-Value DB::get(int key)
-{
-    Value ret;
-    return ret;
+Tuple* DB::get(int key)
+{ 
+    std::vector<Tuple*> v;
+    scan(key, key, v);
+
+    if (v.empty()) {
+      std::string log = "no such key#" + std::to_string(key) + " exist!";
+      KEY_LOG(log);
+      return nullptr;  
+    } else if (v.size() > 1) {
+      std::string log = "more than one result for key#" + std::to_string(key) + " found!";
+      KEY_LOG(log); 
+      return nullptr;
+    } 
+
+    return *v.begin();
 }
 
 
@@ -29,28 +41,18 @@ void DB::put(int key, Value val)
 }
 
 
-void DB::scan(std::vector<Tuple*>& ret)
-{
-   // for (auto pair: table)
-   // {
-   //     return_vector.push_back(pair.second);
-   // }
-
-}
-
-
 void DB::scan(int min_key, int max_key, std::vector<Tuple*>& ret)
 {
     string start(to_string(min_key)), end(to_string(max_key));
-
-    // lsm-t assure the result is ordered
     table->Search(start, end, ret);
 }
 
 
 void DB::del(int key)
 {
-//    table->Delete(key);
+
+    string skey(to_string(key));
+    table->Delete(skey);
 }
 
 

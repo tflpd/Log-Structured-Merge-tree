@@ -13,4 +13,11 @@
 
 #define KEY_LOG(x) do { std::cerr << x << std::endl; } while(0)
 
+
+#include "Args.h"
+
+inline void PrintRange(const Range& range) {
+	std::cout << "range [" << range._begin << ", " << range._end << "]" << std::endl;
+}
+
 #endif

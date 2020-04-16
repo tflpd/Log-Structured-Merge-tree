@@ -74,15 +74,8 @@ bool LSM_T::Insert(std::string key, Value val) {
 }
 
 bool LSM_T::Delete(std::string key) {
-    // auto ret = Search(key);
-    // if (ret == nullptr) {
-    //     // may need to release ret before exit
-    //     // delete ret;
-    //     return false;
-    // }
-
-    // return Insert(key, DEL_PLACEHOLDER);
-    return true;
+    Value del_marker({TERMINATION});
+    return Insert(key, del_marker);
 }
 
 
@@ -92,14 +85,14 @@ void LSM_T::ShowMemBuffer() const {
 
 
 Tuple* LSM_T::Search(std::string key) {
-
     return nullptr;
 }
 
 void re_order(std::vector<Tuple*>& tmpret, std::vector<Tuple*>& ret) {
-    for (auto ptr : tmpret)
-        if (ptr != nullptr) 
+    for (auto ptr : tmpret) {
+        if (ptr != nullptr && !ptr->IsDelMarker()) 
             ret.push_back(ptr);
+    }
 }
 
 void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret) {
@@ -112,7 +105,7 @@ void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret)
     std::vector<bool> checkbits(size, false);
     std::vector<Tuple*> tmpret(size, nullptr);
 
-    bool finished = _buf->Scan(*searchRange, tmpret, checkbits);
+    bool finished = _buf->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
     if (finished) {
         re_order(tmpret, ret);
         delete userAskedRange;
@@ -120,9 +113,6 @@ void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret)
         return;
     }
 
-    // if not finished, re-init lookup range
-    ShrinkSearchRange(*userAskedRange, *searchRange, checkbits);
-    
     for (auto level = _levels.begin(); level != _levels.end(); level++) {
         finished = level->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
         if (finished)

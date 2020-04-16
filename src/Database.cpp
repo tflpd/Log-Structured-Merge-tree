@@ -42,8 +42,6 @@ void DB::scan(std::vector<Tuple*>& ret)
 void DB::scan(int min_key, int max_key, std::vector<Tuple*>& ret)
 {
     string start(to_string(min_key)), end(to_string(max_key));
-
-    // lsm-t assure the result is ordered
     table->Search(start, end, ret);
 }
 

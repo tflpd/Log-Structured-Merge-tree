@@ -122,7 +122,10 @@ void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret)
 
     // if not finished, re-init lookup range
     ShrinkSearchRange(*userAskedRange, *searchRange, checkbits);
-    
+    std::cout << "first shrinked range:" << std::endl;
+    PrintRange(*searchRange);
+
+
     for (auto level = _levels.begin(); level != _levels.end(); level++) {
         finished = level->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
         if (finished)

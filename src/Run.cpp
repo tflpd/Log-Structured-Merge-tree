@@ -151,22 +151,39 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
 void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& offset) {
 
-    const char* startkey = std::to_string(suggestRange._begin).c_str();
-    const char* endkey = std::to_string(suggestRange._end).c_str();
-
-    int startOffset;
-    int endOffset;
+    // init with an invalid range that'd let system know this case
+    // should be skipped
+    int start = 0;
+    int end = -1;
 
     int minKey = _fence_pointerf->GetMin();
     int maxKey = _fence_pointerf->GetMax();
 
-    int start = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
-    int end = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
+    int startKey = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
+    int endKey = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
 
     // check if intersects
-    if (start <= end) {
+    if (startKey <= endKey) {
+        const char* ssk = std::to_string(startKey).c_str();
+        const char* sek = std::to_string(endKey).c_str();
 
+        int offsetStart = getTupleOffset(ssk);
+        int offsetEnd = getTupleOffset(sek);
+
+        // shouldn't get -1 here, as we ensure they lie between [minKey, maxKey].
+        // but make a KEYLOG here in case of any exceptions
+        if (offsetStart != -1 && offsetEnd != -1) {
+            start = offsetStart;
+            end = offsetEnd;
+        } else {
+            std::string log = "unexpected err occur when startKey = " + std::to_string(startKey) +
+                " and endKey = " + std::to_string(endKey);
+            KEY_LOG(log);
+        }
     }
+
+    offset._begin = start;
+    offset._end = end;
 }
 
 void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,  
@@ -174,6 +191,7 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
     Range suggestRange(0, 0);
     fastBFIndex(userAskedRange, searchRange, ret, checkbits, suggestRange);
 
+    PrintRange(suggestRange);
     // need to do disk IO as BF ensure us there will be at least one value matches 
     // our needs
     // also, if read == true, startpoint is surely larger or equal to endpoint
@@ -365,6 +383,8 @@ Run::~Run() {
 bool Run::DeleteFMD() {
     for (auto pFile : _files) {
         const char* fileName = pFile->getFileName().c_str();
+
+        std::cout << "now removing " + pFile->getFileName() << std::endl;
         remove(fileName); // system call
     }
 

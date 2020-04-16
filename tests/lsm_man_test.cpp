@@ -31,7 +31,18 @@ int main(int argc, char **argv)
     db.put(8, v3);
 
 
-    auto v = db.get(4);
+    std::vector<Tuple*> ret;
+    db.scan(4, 7, ret);
+    for (auto ptr : ret) {
+        auto key = ptr->GetKey();
+        auto val = ptr->GetValue();
+        std::cout << key << std::endl;
+        for (auto v : val.items) {
+            std::cout << v << " ";
+        }
+        std::cout << std::endl;
+    }
+
 
     return 0;
 }

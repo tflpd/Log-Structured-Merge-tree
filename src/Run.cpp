@@ -4,7 +4,7 @@
 #include <fstream>
 #include <stdio.h>
 // #include <fcntl.h>
-// #include <unistd.h>
+#include <unistd.h>
 
 FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName):
         _file_pointer(File_pointer), _file_name(FileName) {
@@ -146,6 +146,10 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
 
     suggestRange._begin = startpoint;
     suggestRange._end = endpoint;
+    std::string log = _file_name + " -> The suggested min key of BF is: #" + to_string(startpoint) +
+        ", the suggested max key of BF is: #" + to_string(endpoint);
+
+    DEBUG_LOG(log);
 }
 
 void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange, 
@@ -156,11 +160,18 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
     int start = 0;
     int end = -1;
 
-    int minKey = _fence_pointerf->GetMin();
-    int maxKey = _fence_pointerf->GetMax();
+    int minKey = _fence_pointerf->GetMax();
+    int maxKey = _fence_pointerf->GetMin();
+    std::string log1 = _file_name + " -> The min key of FP is: #" + to_string(minKey) +
+        ", the max key of this FP is: #" + to_string(maxKey);
 
     int startKey = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
     int endKey = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
+    std::string log2 = _file_name + " -> After doing intersection, the suggested start key of FP is: #" + to_string(startKey) +
+        ", the suggested max key of this FP is: #" + to_string(endKey);
+
+    DEBUG_LOG(log1);
+    DEBUG_LOG(log2);
 
     // check if intersects
     if (startKey <= endKey) {
@@ -174,9 +185,10 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
         // but make a KEYLOG here in case of any exceptions
         if (offsetStart != -1 && offsetEnd != -1) {
             start = offsetStart;
-            end = offsetEnd;
+            // how many tuples for an interval * tuple per byte 
+            end = offsetEnd + getFPInterval() * getTupleBytesSize();
         } else {
-            std::string log = "unexpected err occur when startKey = " + std::to_string(startKey) +
+            std::string log = _file_name + " -> unexpected err occur when startKey = " + std::to_string(startKey) +
                 " and endKey = " + std::to_string(endKey);
             KEY_LOG(log);
         }
@@ -184,14 +196,15 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
 
     offset._begin = start;
     offset._end = end;
+    std::string log3 = _file_name + " -> Offset given by this FP is: [" + std::to_string(start) +
+                " ," + std::to_string(end) + "]";
+    DEBUG_LOG(log3);
 }
 
 void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,  
     std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
     Range suggestRange(0, 0);
     fastBFIndex(userAskedRange, searchRange, ret, checkbits, suggestRange);
-
-    PrintRange(suggestRange);
     // need to do disk IO as BF ensure us there will be at least one value matches 
     // our needs
     // also, if read == true, startpoint is surely larger or equal to endpoint
@@ -201,6 +214,7 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
         int start = offset._begin, end = offset._end;
         int interval = _fence_pointerf->getIntervalSize();
+
         if (start > end) return; // no satisfied data in this file
 
         int byteStart = start;
@@ -385,7 +399,11 @@ bool Run::DeleteFMD() {
         const char* fileName = pFile->getFileName().c_str();
 
         std::cout << "now removing " + pFile->getFileName() << std::endl;
+#ifdef __linux__
+        unlink(fileName);
+#else
         remove(fileName); // system call
+#endif
     }
 
     return true;

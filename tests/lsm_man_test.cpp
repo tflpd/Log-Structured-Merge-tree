@@ -23,16 +23,16 @@ int main(int argc, char **argv)
     Value v3 = Value({333, 3});
     db.put(9, v3);
 
-    db.put(10, v3);
+    db.put(10, v2);
     db.put(5, v3);
     db.put(3, v3);
+    db.put(6, v3);
     db.put(7, v3);
 
     db.put(8, v3);
 
-
     std::vector<Tuple*> ret;
-    db.scan(4, 7, ret);
+    db.scan(2, 7, ret);
     for (auto ptr : ret) {
         auto key = ptr->GetKey();
         auto val = ptr->GetValue();
@@ -42,6 +42,19 @@ int main(int argc, char **argv)
         }
         std::cout << std::endl;
     }
+
+
+    auto ptuple = db.get(10);
+    auto val = ptuple->GetValue();
+    for (auto v : val.items) {
+        std::cout << v << " ";
+    }
+    std::cout << std::endl;
+
+
+    db.del(10);
+    ptuple = db.get(10);
+    if (ptuple == nullptr) { std::cout << "del succeed!" << std::endl;}
 
 
     return 0;

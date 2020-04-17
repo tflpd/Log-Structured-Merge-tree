@@ -182,7 +182,6 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 bool Level::Scan(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
     bool finished = false;
-    std::cout << "scan level#" << _id << std::endl;
     // newly added data are at the back of the vector, thus check them in a reversed order
     for (auto rit = _runs.rbegin(); rit != _runs.rend(); rit++) {
         finished = rit->Scan(userAskedRange, searchRange, ret, checkbits);

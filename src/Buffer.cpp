@@ -47,9 +47,9 @@ std::vector<Tuple*> Buffer::GetTuples() {
     return tuples;
 }
 
-bool Buffer::Scan(const Range& searchRange, 
+bool Buffer::Scan(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
-	int iStart = searchRange._begin, iEnd = searchRange._end;
+	int iStart = userAskedRange._begin, iEnd = userAskedRange._end;
 	auto retIt = ret.begin();
 	auto it = checkbits.begin();
 	bool finished = true;
@@ -72,6 +72,8 @@ bool Buffer::Scan(const Range& searchRange,
 			finished &= false;
 		}
 	}
+
+	if (!finished) ShrinkSearchRange(userAskedRange, searchRange, checkbits);
 
 	return finished;
 }

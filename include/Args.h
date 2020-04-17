@@ -93,6 +93,8 @@ struct Range {
 	}
 };
 
+#include "Log.h"
+
 // @vector<bool> checkbits:
 // this vector can be regarded as a list of buckets to indicate
 // if any elements in [start, end] has been found previously
@@ -110,18 +112,21 @@ static void ShrinkSearchRange(const Range& userAskedRange, Range& searchRange,
 	// found the first "hole"(first item with false) in checkbits
     // scan from then on
     int startPoint = userAskedRange._begin, endPoint = userAskedRange._end;
-    for (auto it = checkbits.begin(); it != checkbits.end(); it++) 
-    	if (*it) startPoint++;
- 
+    for (auto it = checkbits.begin(); it != checkbits.end(); it++) {
+    	if (*it == false) break; 
+    	startPoint++;
+    }
 
-    for (auto rit = checkbits.rbegin(); rit != checkbits.rend(); rit++) 
-    	if (*rit) endPoint--;
+    for (auto rit = checkbits.rbegin(); rit != checkbits.rend(); rit++) {
+    	if (*rit == false) break; 
+    	endPoint--;
+    }
 
     searchRange._begin = startPoint;
     searchRange._end = endPoint;
 
-    std::string log = "newly shrinked search range is from [" + 
-    	std::to_string(startPoint) + " ," + std::to_string(endPoint) + "]";
+    // std::string log = "newly shrinked search range is from [" + 
+    	// std::to_string(startPoint) + " ," + std::to_string(endPoint) + "]";
     // DEBUG_LOG(log);
 
 }

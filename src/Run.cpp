@@ -115,6 +115,9 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& suggestRange) {
     auto it = checkbits.begin();
     auto pBF = _bloom_filters.at(0);
+    std::string l = _file_name + " -> The search range is: [" + to_string(searchRange._begin) +
+        ", " + to_string(searchRange._end) + "]";
+    DEBUG_LOG(l);
 
     int startIndex = searchRange._begin - userAskedRange._begin;
     int endIndex = searchRange._end - userAskedRange._begin;
@@ -238,8 +241,8 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
                 && !checkbits[(key - userAskedRange._begin)]) {
-                checkbits[(key - userAskedRange._begin)];
-                ret.push_back(p_tuple);
+                checkbits[(key - userAskedRange._begin)] = true;
+                ret[(key - userAskedRange._begin)] = p_tuple;
             } else
                 delete p_tuple;
         }
@@ -398,7 +401,6 @@ bool Run::DeleteFMD() {
     for (auto pFile : _files) {
         const char* fileName = pFile->getFileName().c_str();
 
-        std::cout << "now removing " + pFile->getFileName() << std::endl;
 #ifdef __linux__
         unlink(fileName);
 #else

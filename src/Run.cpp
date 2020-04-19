@@ -163,8 +163,8 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
     int start = 0;
     int end = -1;
 
-    int minKey = _fence_pointerf->GetMax();
-    int maxKey = _fence_pointerf->GetMin();
+    int minKey = _fence_pointerf->GetMin();
+    int maxKey = _fence_pointerf->GetMax();
     std::string log1 = _file_name + " -> The min key of FP is: #" + to_string(minKey) +
         ", the max key of this FP is: #" + to_string(maxKey);
 

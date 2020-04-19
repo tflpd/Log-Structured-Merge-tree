@@ -25,54 +25,43 @@ bool Level::ReadyMerge() const {
 /* the data to be pushed down is able to fit into memory */
 // Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
 bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
-    //std::vector<Tuple*> accumulative_tuples;
-    // TODO: maybe change here the curr tuples counter
-    //accumulative_tuples.reserve(final_run_size);
-
-    // TODO: maybe in the future just pop the min first element of every run -> more optimal
-    // Number of tuples on the resulting run
-//    uint final_run_size = 0;
-//    for (auto& run : _max_runs_before_merging) {
-//        final_run_size += run.GetAllTuples().size();
-//    }
-//    final_run_size += tuples->size();
-//
-//    for (int i = 0; i < final_run_size; ++i) {
-//        uint min_value = UINT_MAX;
-//        uint min_run_index = _max_runs_before_merging.size() + 1;
-//        for (auto& run : _max_runs_before_merging) {
-//
-//        }
-//    }
 
     // Add all tuples of this level in a vector
-    for (auto& run : _runs) {
-        auto arr = run.GetAllTuples();
-        tuples.insert(tuples.end(), arr.begin(), arr.end());
-        //accumulative_tuples.insert(accumulative_tuples.end(), run.GetAllTuples().begin(), run.GetAllTuples().end());
+//    for (auto& run : _runs) {
+//        auto arr = run.GetAllTuples();
+//        tuples.insert(tuples.end(), arr.begin(), arr.end());
+//    }
+    // For each one of the runs of this level starting from the last/latest
+    for (int i = _runs.size() - 1; i >= 0; --i) {
+        // Get its tuples
+        //std::cout << "EDW1 " <<  to_string(i) << endl;
+        auto runs_tuples = _runs.at(i).GetAllTuples();
+        //std::cout << "EDW2" << endl;
+        // For every tuple in the vector that was dumped from the level above
+        for(auto& tuple : tuples){
+            //std::cout << "EDW3" << endl;
+            // Try to get the position of this tuple in the run we are going through right now
+            // using binary search since each run is already sorted
+            auto it = std::lower_bound(
+                    runs_tuples.begin(), runs_tuples.end(), tuple,
+                    [](Tuple *t1, Tuple *t) { return t1->GetKey() == t->GetKey(); });
+            // If we actually found the position of a tuple with the same key in the run we
+            // are currently going through
+            if ( it != runs_tuples.end() && (*it)->GetKey() == tuple->GetKey() ){
+                // Then delete this tuple since we have already a "fresher" value of it
+                runs_tuples.erase(it);
+            }
+        }
+        // After we have deleted all the tuples that have "fresher" values
+        // we can merge the rest to the "tuples" vector and continue the process
+        // for the rest of the runs
+        tuples.insert(tuples.end(), runs_tuples.begin(), runs_tuples.end());
     }
-    // and the ones provided as an argument
-    //accumulative_tuples.insert(accumulative_tuples.end(), tuples.begin(), tuples.end());
 
-    // Merge-sort them
-    //_Sort(&accumulative_tuples);
-
-    // TODO: Delete all existing runs and their sst files here
-//    for (auto p_buf : buf_vec)
-//        delete p_buf;
     _Clear();
 
     return true;
 }
-
-//bool Level::AppendRun(Buffer* auxiliary_buffer) {
-//    _max_runs_before_merging.emplace_back(_files_per_run);
-//    auto last = _max_runs_before_merging.back();
-//    last.Flush(auxiliary_buffer);
-//
-//    auxiliary_buffer->Clear();
-//    return true;
-//}
 
 bool Level::_Clear() {
     for (auto& run : _runs) 

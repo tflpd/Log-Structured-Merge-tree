@@ -255,17 +255,19 @@ std::string FileMetaData::getFileName() const {
 }
 
 /// It will always add at least two fence pointers, one to the start and one to the end of the passed tuples
+/// Apart from that it will add one FP after FP_INTERV tuples
+/// So for example for FP_INTERV = 2 it will add a pointer at position 0
+/// and then the next one will be at position 3
 void FileMetaData::addFences(const vector<Tuple*>& tuples){
     //std::cout << _fence_pointerf->getIntervalSize() << std::endl;
-    if (tuples.size() % (_fence_pointerf->getIntervalSize() + 1) == 0) {
-        for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
-            _fence_pointerf->AddFence(tuples.at(i)->GetKey());
-        }
-    }else{
-        for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize()) {
-            _fence_pointerf->AddFence(tuples.at(i)->GetKey());
-        }
-        _fence_pointerf->AddFence(tuples.at(tuples.size() - 1)->GetKey());
+    //std::cout << tuples.size() << std::endl;
+    for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize() + 1) {
+        _fence_pointerf->AddFence(tuples.at(i)->GetKey());
+        //std::cout << "MPIKA1" << std::endl;
+    }
+    if ((tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1) != 0){
+        _fence_pointerf->AddFence(tuples.back()->GetKey());
+        //std::cout << "MPIKA2" << std::endl;
     }
 }
 
@@ -427,7 +429,7 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
 
     FILE* fp = fopen(fileName.c_str(), "wb");
     auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
-    //tmpFMD->printFences();
+    tmpFMD->printFences();
     fclose(fp);
 
     _files.push_back(tmpFMD);

@@ -27,6 +27,7 @@ int main(int argc, char **argv)
     db.put(5, v3);
     db.put(3, v3);
     db.put(6, v3);
+
     db.put(7, v3);
 
     db.put(8, v3);

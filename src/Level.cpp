@@ -24,6 +24,7 @@ bool Level::ReadyMerge() const {
 
 /* the data to be pushed down is able to fit into memory */
 // Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
+// TODO: Ensure that tuples do not have doublicates when passed here
 bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 
     // Add all tuples of this level in a vector

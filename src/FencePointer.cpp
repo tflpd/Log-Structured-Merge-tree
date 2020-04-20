@@ -33,7 +33,7 @@ int FencePointer::GetIndex(const char *key) {
             if (uint_key < fence_number)
                 return (i - 1)*_interval_size;
 
-            if (i == _fences.size() - 1 && uint_key == fence_number)
+            if (uint_key == fence_number && i == _fences.size() - 1)
                 return i*_interval_size;
         }
     }

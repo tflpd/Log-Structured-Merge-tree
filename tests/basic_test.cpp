@@ -3,77 +3,91 @@
 
 #include "gtest/gtest.h"
 #include "Database.hpp"
+#include "Tuple.h"
+#include "Log.h"
+#include <unordered_map>
+#include <vector>
+#include <stdlib.h>
+#include <time.h>
 
+using namespace std;
+
+#define INIT_RECORD_CNT 1000
+#define MAX_KEY 5000
+#define MAX_VAL 10000
+#define GET_REQUESTS 50
+#define DEL_REQUESTS 50
+#define SCAN_REQUESTS 50
+#define MAX_SCAN_RANGE 100
 
 class DBTest : public ::testing::Test
 {
-protected:
-    templatedb::DB db0;
-    templatedb::DB db1;
-    templatedb::DB db2;
+    DB db();
+    unordered_map<int, pair<int,int>> index;
 
-    templatedb::Value v1 = templatedb::Value({1, 2});
-    templatedb::Value v2 = templatedb::Value({6, 10});
-    templatedb::Value v3 = templatedb::Value({1, 1, 5, 7});
-    templatedb::Value v4 = templatedb::Value({13, 176});
+    // get a rand key that exists in index map
+    void GetRandKey() const {
 
+    }
 
     void SetUp() override 
     {
-        db1.put(2, v1);
-        db1.put(5, v2);
-        db2.put(1024, v3);
+        srand(time(0));
+
+        // populate db w. some amount of data
+        for (int cnt = 0; cnt < INIT_RECORD_CNT; cnt++) {
+            int key = rand() % MAX_KEY;
+            int val1 = rand() % MAX_VAL, val2 = rand() % MAX_VAL;
+            Value val({val1, val2});
+
+            index[key] = make_pair(val1, val2);
+            db.put(key, val);
+        }
     }
 };
 
 
-TEST_F(DBTest, IsEmptyInitially)
-{
-    EXPECT_EQ(db0.size(), 0);
-}
-
-
 TEST_F(DBTest, GetFunctionality)
 {
-    templatedb::Value val = db1.get(2);
-    EXPECT_EQ(DBTest::v1, val);
-}
+    for (int cnt = 0; cnt < GET_REQUESTS; cnt++) {
+        int key = DBTest::GetRandKey();
+        auto p_ret = DBTest::db.get(key);
 
+        ASSERT_NE(p_ret, nullptr);
 
-TEST_F(DBTest, PutAndGetFunctionality)
-{
-    db0.put(10, v4);
-    templatedb::Value get_value = db0.get(10);
+        auto val = p_ret->GetValue();
+        auto pair = DBTest::index[key];
+        Value expected({pair.first, pair.second});
 
-    EXPECT_EQ(DBTest::v4, get_value);
+        EXPECT_EQ(val, expected);
+    }
 }
 
 
 TEST_F(DBTest, DeleteFunctionality)
 {
-    db1.del(2);
-    EXPECT_EQ(db1.get(2), templatedb::Value(false));
-    EXPECT_EQ(db1.size(), 1);
+    for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
+        int key = DBTest::GetRandKey();
+        DBTest::db.del(key);
+        DBTest::index.erase(key);
 
-    db2.del(1024);
-    EXPECT_EQ(db2.get(1024), templatedb::Value(false));
-    EXPECT_EQ(db2.size(), 0);
+        auto p_ret = DBTest::db.get(key);
+        EXPECT_EQ(p_ret, nullptr);
+    }
 }
 
 
 TEST_F(DBTest, ScanFunctionality)
 {
-    std::vector<templatedb::Value> vals;
-    vals = db2.scan();
-    ASSERT_EQ(vals.size(), 1);
-    EXPECT_EQ(vals[0], DBTest::v3);
+    for (int cnt = 0; cnt < SCAN_REQUESTS; cnt++) {
+        int start = rand() % MAX_KEY, end = start + rand() % MAX_SCAN_RANGE;
 
-    vals = db1.scan(1, 3);
-    ASSERT_EQ(vals.size(), 1);
-    EXPECT_EQ(vals[0], DBTest::v1);
+        vector<Tuple*> ret;
+        DBTest::db.scan(start, end, ret);
 
-    vals = db1.scan();
-    ASSERT_EQ(vals.size(), 2);
+            
+
+    }
 }
 
 

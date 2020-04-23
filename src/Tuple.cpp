@@ -19,7 +19,7 @@ Tuple::Tuple() {
     _value = Value();
 }
 
-Tuple::Tuple(Tuple& other) {
+Tuple::Tuple(const Tuple& other) {
     _key = other.GetKey();
     _value = other.GetValue();
 }

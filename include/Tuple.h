@@ -39,7 +39,7 @@ public:
     Tuple(std::string key, Value val);
     ~Tuple();
 
-    Tuple(Tuple& other);
+    Tuple(const Tuple& other);
     Tuple();
 //    inline void SetKey(const std::string key){
 //        this->_key = key;
@@ -47,10 +47,10 @@ public:
     inline void SetValue(Value val){
         this->_value = val;
     }
-    inline std::string GetKey(){
+    inline std::string GetKey() const{
         return _key;
     }
-    inline Value GetValue(){
+    inline Value GetValue() const{
         return _value;
     }
     std::string ToString() const;

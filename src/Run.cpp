@@ -206,6 +206,9 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
 
 void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,  
     std::vector<Tuple*>& ret, std::vector<bool>& checkbits) {
+    std:string marker = "Current search Range is: [" + std::to_string(searchRange._begin) + ", "
+        + std::to_string(searchRange._end) + "]";
+    DEBUG_LOG(marker);
     Range suggestRange(0, 0);
     fastBFIndex(userAskedRange, searchRange, ret, checkbits, suggestRange);
     // need to do disk IO as BF ensure us there will be at least one value matches 
@@ -215,22 +218,18 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
         Range offset(0, 0);
         fastFPIndex(userAskedRange, suggestRange, ret, checkbits, offset);
 
-        int start = offset._begin, end = offset._end;
-        int interval = _fence_pointerf->getIntervalSize();
+        int tupleSize = getTupleBytesSize();
+        int start = offset._begin, end = offset._end + _fence_pointerf->getIntervalSize() * tupleSize;
+        int size = end - start;
 
-        if (start > end) return; // no satisfied data in this file
-
-        int byteStart = start;
-        int byteEnd = (start == end) ? byteStart + interval : end;
-        int size = byteEnd - byteStart;
+        if (size <= 0) return; // no satisfied data in this file
 
         FILE* fp = fopen(_file_name.c_str(), "rb");
         char* tmpbuf = new char[size];
-        fseek(fp, byteStart, SEEK_SET);
+        fseek(fp, start, SEEK_SET);
         fread(tmpbuf, 1, size, fp);
         fclose(fp);
 
-        int tupleSize = getTupleBytesSize();
         int _num_tuples = size / tupleSize;
 
         for (int num = 0; num < _num_tuples; num++) {
@@ -238,6 +237,7 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
             auto p_tuple = new Tuple();
             p_tuple->Read2Tuple(tmpbuf + offset);
             int key = std::stoi(p_tuple->GetKey());
+            std::cout << key << std::endl;
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
                 && !checkbits[(key - userAskedRange._begin)]) {
@@ -369,10 +369,10 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
     if (_num_tuples * getTupleBytesSize() % getSSTSize())
         files_to_be_created++;
 
-    DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) +
-                      " of Level#" + std::to_string(_level_id) +
-                      ": creating #" + std::to_string(files_to_be_created) +
-        " file(s) with #" + std::to_string(tuples_per_file) + " tuples per file.");
+    // DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) +
+    //                   " of Level#" + std::to_string(_level_id) +
+    //                   ": creating #" + std::to_string(files_to_be_created) +
+    //     " file(s) with #" + std::to_string(tuples_per_file) + " tuples per file.");
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to

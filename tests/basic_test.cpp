@@ -16,12 +16,12 @@
 
 using namespace std;
 
-#define INIT_RECORD_CNT 10
+#define INIT_RECORD_CNT 1000
 #define MAX_KEY 5000
 #define MAX_VAL 10000
-#define GET_REQUESTS 5
-#define DEL_REQUESTS 5
-#define SCAN_REQUESTS 5
+#define GET_REQUESTS 50
+#define DEL_REQUESTS 50
+#define SCAN_REQUESTS 50
 #define MAX_SCAN_RANGE 100
 
 class DBTest : public ::testing::Test
@@ -120,7 +120,14 @@ TEST_F(DBTest, ScanFunctionality)
         // verify if the returned result from LSMT system equals to expected result
         ASSERT_EQ(expected.size(), ret.size());
         for (int i = 0; i < expected.size(); i++) {
-            int expectedKey = stoi(expected[i].GetKey()), retKey = stoi(ret[i]->GetKey());
+            auto sek = expected[i].GetKey(), srk = ret[i]->GetKey();
+            int expectedKey, retKey;
+            try {
+                expectedKey = stoi(expected[i].GetKey());
+                retKey = stoi(ret[i]->GetKey());
+            } catch (const std::exception& e){
+                cout << "Exception occur! expected Key is: " + sek + ", " + "ret Key is: " + srk + "\n";
+            }
 
             auto expectedVal = expected[i].GetValue();
             auto retVal = ret[i]->GetValue();

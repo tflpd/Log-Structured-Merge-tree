@@ -96,6 +96,8 @@ void re_order(std::vector<Tuple*>& tmpret, std::vector<Tuple*>& ret) {
 }
 
 void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret) {
+    std::string startlog = "new Search start: in range - " + start + ", " + end ;
+    DEBUG_LOG(startlog);
     int iStart = std::stoi(start), iEnd = std::stoi(end);
     int size = iEnd - iStart + 1;
 

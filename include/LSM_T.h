@@ -15,10 +15,10 @@ public:
     LSM_T(int minSSTSize, int tupleSize, int a, int runs);
     ~LSM_T();
 
-    Tuple* Search(std::string key);
-    void Search(std::string start, std::string end, vector<Tuple*>& ret);
-    bool Insert(std::string key, Value val);
-    bool Delete(std::string key);
+    Tuple* Search(int key);
+    void Search(int start, int end, vector<Tuple*>& ret);
+    bool Insert(int key, Value val);
+    bool Delete(int key);
 
     void ShowMemBuffer() const;
 

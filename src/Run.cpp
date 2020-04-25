@@ -236,7 +236,7 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
             int offset = num * tupleSize;
             auto p_tuple = new Tuple();
             p_tuple->Read2Tuple(tmpbuf + offset);
-            int key = std::stoi(p_tuple->GetKey());
+            int key = p_tuple->GetKey();
             std::cout << key << std::endl;
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
@@ -262,11 +262,13 @@ void FileMetaData::addFences(const vector<Tuple*>& tuples){
     //std::cout << _fence_pointerf->getIntervalSize() << std::endl;
     //std::cout << tuples.size() << std::endl;
     for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize() + 1) {
-        _fence_pointerf->AddFence(tuples.at(i)->GetKey());
+        _fence_pointerf->AddFence(std::to_string(
+            tuples.at(i)->GetKey()));
         //std::cout << "MPIKA1" << std::endl;
     }
     if ((tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1) != 0){
-        _fence_pointerf->AddFence(tuples.back()->GetKey());
+        _fence_pointerf->AddFence(std::to_string(
+            tuples.back()->GetKey()));
         //std::cout << "MPIKA2" << std::endl;
     }
 }
@@ -298,7 +300,8 @@ void FileMetaData::addBloomFilters(const vector<Tuple*> tuples, int BF_num_eleme
     for (int i = 0; i < tuples.size(); ++i) {
         if (i%BF_num_elements == 0)
             j++;
-        _bloom_filters.at(j)->program(tuples.at(i)->GetKey());
+        _bloom_filters.at(j)->program(std::to_string(
+            tuples.at(i)->GetKey()));
     }
 }
 

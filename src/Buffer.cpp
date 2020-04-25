@@ -11,7 +11,7 @@ Buffer::~Buffer() {
 
 }
 
-bool Buffer::Append(std::string key, Value val) {
+bool Buffer::Append(int key, Value val) {
 	// concurrent access may lead to tuple oversized
 	// however, I think no special handling is needed 
 	// as it doesn't hurt data integrity
@@ -58,7 +58,7 @@ bool Buffer::Scan(const Range& userAskedRange, Range& searchRange,
 	// we may move to skip list or any data structures that have a Log(n) search & insertion time
 	// in the future
 	for (auto rit = tuples.rbegin(); rit != tuples.rend(); rit++) {
-		int iKey = std::stoi((*rit)->GetKey());
+		int iKey = (*rit)->GetKey();
 		int diff = iKey - iStart; 
 		if (iKey >= iStart && iKey <= iEnd 
 				&& !checkbits[diff]) {

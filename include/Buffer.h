@@ -21,7 +21,7 @@ public:
     //bool Get(Buffer* other); // move data from other buffer to this buffer
     std::vector<Tuple*> GetTuples();
 
-    bool Append(std::string key, Value val);
+    bool Append(int key, Value val);
     bool IsFull() const;
 
     void print() const;

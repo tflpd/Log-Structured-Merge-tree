@@ -100,7 +100,7 @@ void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, u
     k = left; // Initial index of merged subarray
     while (i < n1 && j < n2)
     {
-        if (stoi(L[i]->GetKey()) <= stoi(R[j]->GetKey()))
+        if (L[i]->GetKey() <= R[j]->GetKey())
         {
             (tuples)[k] = L[i];
             i++;

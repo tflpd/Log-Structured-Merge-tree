@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Tuple::Tuple(std::string key, Value val):
-    _key(std::move(key)), _value(std::move(val)){
+Tuple::Tuple(int key, Value val):
+    _key(key), _value(val){
 }
 
 // empty constructor for reading in persistent data on disk
@@ -32,7 +32,7 @@ void Tuple::PrintTuple() {
 
 std::string Tuple::ToString() const{
     string ret;
-    ret += _key;
+    ret += std::to_string(_key);
     ret += "|";
 
     ret += "{";
@@ -53,8 +53,7 @@ void Tuple::AppendBin2Vec(char* wbuf) const {
     memset(tmp, 0, cap); 
 
     // convert _key from int to char(byte) and fill it in char array
-    int k = std::stoi(_key);
-    memcpy(tmp, &k, SIZEOFINT);
+    memcpy(tmp, &_key, SIZEOFINT);
 
     int num2copy = (_value.items.size() <= MAX_TUPLE_VALUES_CNTS) ? _value.items.size() : MAX_TUPLE_VALUES_CNTS;
     memcpy(tmp + SIZEOFINT, &_value.items[0], num2copy*SIZEOFINT);
@@ -82,9 +81,7 @@ void Tuple::Read2Tuple(char* rbuf) {
 
     // first MAX_TUPLE_KEYS_CNTS * SIZEOFINT bytes refer to key
     int size_of_key = MAX_TUPLE_KEYS_CNTS * SIZEOFINT;
-    int key;
-    std::memcpy(&key, rbuf, SIZEOFINT);
-    _key = to_string(key);
+    std::memcpy(&_key, rbuf, SIZEOFINT);
 
     // iterate through the following bytes util meets a val of TERMINATION
     // dumb approach

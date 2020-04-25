@@ -16,7 +16,7 @@ LSM_T::LSM_T(int SSTSize, int tupleSize, int a, int runs):
     _buf = new Buffer(bufsize);
 }
 
-bool LSM_T::Insert(std::string key, Value val) {
+bool LSM_T::Insert(int key, Value val) {
     auto ret = _buf->Append(key, val);
 
     // if (_buf->IsFull()) {
@@ -58,14 +58,14 @@ bool LSM_T::Insert(std::string key, Value val) {
         _buf->Clear();
         auto retRedo = _buf->Append(key, val);
         if (!retRedo) {
-            DEBUG_LOG(std::string(" re-append key#") + key + " to buffer failed!");
+            DEBUG_LOG(std::string(" re-append key#") + to_string(key) + " to buffer failed!");
             return false;
         }
 
-        DEBUG_LOG(std::string(" append key#") + key + " to buffer success!");
+        DEBUG_LOG(std::string(" append key#") + to_string(key) + " to buffer success!");
         _buf->print();
     } else {
-        DEBUG_LOG(std::string(" append key#") + key + " to buffer success!");
+        DEBUG_LOG(std::string(" append key#") + to_string(key) + " to buffer success!");
         _buf->print();
     }
 
@@ -73,7 +73,7 @@ bool LSM_T::Insert(std::string key, Value val) {
     return true;
 }
 
-bool LSM_T::Delete(std::string key) {
+bool LSM_T::Delete(int key) {
     Value del_marker({TERMINATION});
     return Insert(key, del_marker);
 }
@@ -84,7 +84,7 @@ void LSM_T::ShowMemBuffer() const {
 }
 
 
-Tuple* LSM_T::Search(std::string key) {
+Tuple* LSM_T::Search(int key) {
     return nullptr;
 }
 
@@ -95,14 +95,14 @@ void re_order(std::vector<Tuple*>& tmpret, std::vector<Tuple*>& ret) {
     }
 }
 
-void LSM_T::Search(std::string start, std::string end, std::vector<Tuple*>& ret) {
-    std::string startlog = "new Search start: in range - " + start + ", " + end ;
+void LSM_T::Search(int start, int end, std::vector<Tuple*>& ret) {
+    std::string startlog = "new Search start: in range - " + std::to_string(start) 
+        + ", " + std::to_string(end);
     DEBUG_LOG(startlog);
-    int iStart = std::stoi(start), iEnd = std::stoi(end);
-    int size = iEnd - iStart + 1;
+    int size = end - start + 1;
 
-    Range* userAskedRange = new Range(iStart, iEnd);
-    Range* searchRange = new Range(iStart, iEnd);
+    Range* userAskedRange = new Range(start, end);
+    Range* searchRange = new Range(start, end);
 
     std::vector<bool> checkbits(size, false);
     std::vector<Tuple*> tmpret(size, nullptr);

@@ -37,22 +37,19 @@ Tuple* DB::get(int key)
 
 void DB::put(int key, Value val)
 {
-    table->Insert(to_string(key), val);
+    table->Insert(key, val);
 }
 
 
 void DB::scan(int min_key, int max_key, std::vector<Tuple*>& ret)
 {
-    string start(to_string(min_key)), end(to_string(max_key));
-    table->Search(start, end, ret);
+    table->Search(min_key, max_key, ret);
 }
 
 
 void DB::del(int key)
 {
-
-    string skey(to_string(key));
-    table->Delete(skey);
+    table->Delete(key);
 }
 
 

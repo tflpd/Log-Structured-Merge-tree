@@ -18,7 +18,9 @@ public:
 
     Value() {}
     // Value(bool _visible) {visible = _visible;}
-    Value(std::vector<int> _items) { items = _items;}
+    Value(std::vector<int> _items) { 
+        items = _items;
+    }
     Value(const Value& other) {
         visible = other.visible;
         items.insert(items.end(), other.items.begin(), other.items.end());
@@ -38,21 +40,19 @@ public:
 
 class Tuple{
 private:
-    std::string _key;
+    int _key;
     Value _value;
 public:
-    Tuple(std::string key, Value val);
+    Tuple(int key, Value val);
     ~Tuple();
 
     Tuple(const Tuple& other);
     Tuple();
-//    inline void SetKey(const std::string key){
-//        this->_key = key;
-//    }
+    
     inline void SetValue(Value val){
         this->_value = val;
     }
-    inline std::string GetKey() const{
+    inline int GetKey() const{
         return _key;
     }
     inline Value GetValue() const{

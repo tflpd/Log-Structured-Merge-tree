@@ -26,7 +26,12 @@ public:
     
     bool operator ==(Value const & other) const
     {
-        return (visible == other.visible) && (items == other.items);
+        if (other.items.size() != items.size()) return false;
+        for (int i = 0; i < items.size(); i++) 
+            if (items[i] != other.items[i])
+                return false;
+
+        return true; 
     }
 };
 

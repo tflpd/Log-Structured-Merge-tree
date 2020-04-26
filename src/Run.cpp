@@ -126,7 +126,7 @@ void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange,
     int startIndex = searchRange._begin - userAskedRange._begin;
     int endIndex = searchRange._end - userAskedRange._begin;
     int len = endIndex - startIndex + 1;
-    int startpoint, endpoint;
+    int startpoint = searchRange._begin, endpoint = searchRange._end;
 
     // can be refined, no need to do two passes
     for (int index = startIndex; index <= endIndex; index++) {

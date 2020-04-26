@@ -273,10 +273,15 @@ void FileMetaData::addFences(const vector<Tuple*>& tuples){
             tuples.at(i)->GetKey()));
         //std::cout << "MPIKA1" << std::endl;
     }
-    if ((tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1) != 0){
-        _fence_pointerf->AddFence(std::to_string(
-            tuples.back()->GetKey()));
-        //std::cout << "MPIKA2" << std::endl;
+    if (tuples.size() - 1 <= _fence_pointerf->getIntervalSize() + 1){
+        final_segment_size = 0;
+    } else{
+        final_segment_size = (tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1);
+        if (final_segment_size != 0){
+            _fence_pointerf->AddFence(std::to_string(
+                    tuples.back()->GetKey()));
+            //std::cout << "MPIKA2" << std::endl;
+        }
     }
 }
 
@@ -352,13 +357,13 @@ void FileMetaData::printFences() {
 /// Returns the offset of the tuple that is the fence right before the target tuple
 /// So the key we are looking for should be max FP_INTERV away
 /// If not found returns -1
-int FileMetaData::getTupleOffset(const char *key) {
+int FileMetaData::getTupleOffset(const char *key, int& start, int& end) {
     //DEBUG_LOG(std::string("PRIN PRIN PERASA BF") + "");
     for (auto & _bloom_filter : _bloom_filters) {
         //DEBUG_LOG(std::string("PRIN PERASA BF") + "");
         if (_bloom_filter->query(key)){
             //DEBUG_LOG(std::string("PERASA BF") + "");
-            int index = _fence_pointerf->GetIndex(key);
+            int index = _fence_pointerf->GetIndex(key, start, end);
             if (index >= 0){
                 return index * getTupleBytesSize();
             }else{

@@ -18,7 +18,7 @@ public:
     virtual ~FencePointer();
     // Returns the index(from which then the offset can be calculated) of the key "key" in this file. If does not exist -1 OR
     // Returns the (file) index of the key "key" in this level. If does not exist -1
-    int GetIndex(const char *key);
+    int GetIndex(const char *key, int& start, int& end, int final_segment_size);
     bool AddFence(std::string key);
     bool ClearFences();
 

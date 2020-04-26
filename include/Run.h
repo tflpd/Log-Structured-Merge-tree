@@ -41,7 +41,7 @@ public:
     int getNumTuples() const;
     std::string getFileName() const;
     void printFences();
-    int getTupleOffset(const char *key);
+    int getTupleOffset(const char *key, int& start, int& end);
 
     void Collect(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
@@ -50,6 +50,7 @@ private:
     FILE *_file_pointer;
     std::string _file_name;
     FencePointer *_fence_pointerf;
+    uint final_segment_size;
     vector<BF::BloomFilter*> _bloom_filters;
     // The number of the tuples in this file
     int _num_tuples;

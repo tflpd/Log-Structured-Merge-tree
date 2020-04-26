@@ -20,7 +20,7 @@
 #define WRITEBUFCAP     4096
 #define MAX_TUPLE_KEYS_CNTS    1
 #define MAX_TUPLE_VALUES_CNTS   2
-#define FP_INTERV 2 /// THIS HAS TO BE EQUAL OR LESS TO THE ELEMENTS CAPACITY OF SST AND (FP_INTERV + 1) MUST BE AN EXACT DIVIDER OF THAT VALUE (SO MOD SHOULD BE ZERO)
+#define FP_INTERV 2 /// DETERMINES HOW MANY KEYS WILL EXIST BETWEEN TWO FENCE POINTERS. E.G. IF WE HAVE THE 1 4 5 6 KEYS IN A RUN AND AN INTERVAL = 1 THEN THE FPS WILL BE 1, 5, 6
 #define BF_NUM_TUPLES 4 /// FOR NOW this should be a one to one relation to the sst size - so one bf per file
 #define BF_BITS_PER_ELEMENT 1 /// The relation between BF_NUM_TUPLES and BF_BITS_PER_ELEMENT should be ~ 10:1
 #define LEVELS_SIZE_RATIO 2 /// So for example level one runs will be equal to size ratio * level0_runs or equally level one tuples will be equal to size ratio * level0_tuples

@@ -17,7 +17,7 @@ struct FileMetaData
 {
 public:
     // Default constructor
-    FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, std::string FileName);
+    FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std::string FileName);
 
     // will be called from failure/reboot recovery
     FileMetaData(std::string FileName);
@@ -34,9 +34,9 @@ public:
     // Those two functions are symmetric to the constructors - they are just to be used to modify
     // the components of the FMD after merging some runs - in order to avoid creating new FMD's for
     // each run we can just re-use the existing ones
-    bool ModifyComponentsPostMerge(const vector<Tuple*> tuples);
-    bool ModifyComponentsPostMerge(const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-                                   int BF_bits_per_element);
+//    bool ModifyComponentsPostMerge(const vector<Tuple*> tuples);
+//    bool ModifyComponentsPostMerge(const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
+//                                   int BF_bits_per_element);
 
     int getNumTuples() const;
     std::string getFileName() const;
@@ -57,7 +57,7 @@ private:
     // Adds/creates the fences of this file consuming the provided tuples
     void addFences(const vector<Tuple*>& tuples);
     // Adds/creates the BFs (with specific parameters) of this file consuming the provided tuples
-    void addBloomFilters(const vector<Tuple*> tuples, int BF_num_elements, int BF_bits_per_element);
+    void addBloomFilters(const vector<Tuple*>& tuples, int BF_num_elements, int BF_bits_per_element);
 
     void fastBFIndex(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits, Range& suggestRange);
@@ -88,7 +88,7 @@ public:
     bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
     bool Scan(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
-    int getTupleOffset(const char *key);
+    //int getTupleOffset(const char *key);
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array

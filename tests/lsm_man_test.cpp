@@ -18,19 +18,21 @@ int main(int argc, char **argv)
     Value v2 = Value({4, 5});
     Value v3 = Value({333, 3});
     
-    db.put(2345, v2);
-    db.put(196, v3);
-    db.put(3505, v2);
-    db.put(4350, v3);
-    db.put(4303, v2);
-    db.put(2073, v3);
-    db.put(4382, v2);
-    db.put(3568, v3);
-    db.put(2816, v2);
-    db.put(2659, v3);
+    db.put(4, v1);
+    db.put(3, v1);
+    db.put(2, v1);
+    db.put(1, v1);
+
+    db.put(5, v2);
+    db.put(8, v2);
+    db.put(6, v2);
+    db.put(3, v2);
+
+    db.put(10, v3);
+    
 
     std::vector<Tuple*> ret;
-    db.scan(4313, 4402, ret);
+    db.scan(3, 3, ret);
     // for (auto ptr : ret) {
     //     auto key = ptr->GetKey();
     //     auto val = ptr->GetValue();
@@ -43,6 +45,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < ret.size(); i++) {
         int key = ret[i]->GetKey();
         cout << key << endl;
+        cout << ret[i]->_value.items[0] << ", " << ret[i]->_value.items[1] << endl; 
     }
 
 

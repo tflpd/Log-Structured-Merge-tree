@@ -241,10 +241,13 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
             auto p_tuple = new Tuple();
             p_tuple->Read2Tuple(tmpbuf + offset);
             int key = p_tuple->GetKey();
-            std::cout << key << std::endl;
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
                 && !checkbits[(key - userAskedRange._begin)]) {
+                cout << "read from:" + _file_name + " the #" + std::to_string(num) + "tuple" << endl;
+                cout << key << endl;
+                cout << p_tuple->_value.items[0] << ", " << p_tuple->_value.items[1] << endl;
+
                 checkbits[(key - userAskedRange._begin)] = true;
                 ret[(key - userAskedRange._begin)] = p_tuple;
             } else

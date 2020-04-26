@@ -39,7 +39,7 @@ public:
 
 
 class Tuple{
-private:
+public:
     int _key;
     Value _value;
 public:

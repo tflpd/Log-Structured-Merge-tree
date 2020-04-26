@@ -45,7 +45,7 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
             // using binary search since each run is already sorted
             auto it = std::lower_bound(
                     runs_tuples.begin(), runs_tuples.end(), tuple,
-                    [](Tuple *t1, Tuple *t) { return t1->GetKey() == t->GetKey(); });
+                    [](Tuple *t1, Tuple *t) { return t1->GetKey() < t->GetKey(); });
             // If we actually found the position of a tuple with the same key in the run we
             // are currently going through
             if ( it != runs_tuples.end() && (*it)->GetKey() == tuple->GetKey() ){

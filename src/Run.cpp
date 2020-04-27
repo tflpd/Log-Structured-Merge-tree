@@ -367,6 +367,7 @@ int FileMetaData::getTupleOffset(const char *key, int& start, int& end) {
             if (index >= 0){
                 return index * getTupleBytesSize();
             }else{
+                start = end = -1;
                 return -1;
             }
         }

@@ -363,7 +363,7 @@ int FileMetaData::getTupleOffset(const char *key, int& start, int& end) {
         //DEBUG_LOG(std::string("PRIN PERASA BF") + "");
         if (_bloom_filter->query(key)){
             //DEBUG_LOG(std::string("PERASA BF") + "");
-            int index = _fence_pointerf->GetIndex(key, start, end);
+            int index = _fence_pointerf->GetIndex(key, start, end, final_segment_size);
             if (index >= 0){
                 return index * getTupleBytesSize();
             }else{

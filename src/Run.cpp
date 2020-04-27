@@ -365,6 +365,8 @@ int FileMetaData::getTupleOffset(const char *key, int& start, int& end) {
             //DEBUG_LOG(std::string("PERASA BF") + "");
             int index = _fence_pointerf->GetIndex(key, start, end, final_segment_size);
             if (index >= 0){
+                start *= getTupleBytesSize();
+                end *= getTupleBytesSize();
                 return index * getTupleBytesSize();
             }else{
                 start = end = -1;

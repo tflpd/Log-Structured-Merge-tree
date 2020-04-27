@@ -185,15 +185,18 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
         const char* ssk = std::to_string(startKey).c_str();
         const char* sek = std::to_string(endKey).c_str();
 
-        int offsetStart = getTupleOffset(ssk);
-        int offsetEnd = getTupleOffset(sek);
+        int start1, end1;
+        int start2, end2;
+
+        getTupleOffset(ssk, start1, end1);
+        getTupleOffset(sek, start2, end2);
 
         // shouldn't get -1 here, as we ensure they lie between [minKey, maxKey].
         // but make a KEYLOG here in case of any exceptions
-        if (offsetStart != -1 && offsetEnd != -1) {
-            start = offsetStart;
+        if (start1 != -1 && end2 != -1) {
+            start = start1;
             // how many tuples for an interval * tuple per byte 
-            end = offsetEnd + getFPInterval() * getTupleBytesSize();
+            end = end2;
         } else {
             std::string log = _file_name + " -> unexpected err occur when startKey = " + std::to_string(startKey) +
                 " and endKey = " + std::to_string(endKey);

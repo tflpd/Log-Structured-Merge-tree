@@ -17,7 +17,7 @@
 #include "Args.h"
 
 inline void PrintRange(const Range& range) {
-	std::cout << "range [" << range._begin << ", " << range._end << "]" << std::endl;
+	// std::cout << "range [" << range._begin << ", " << range._end << "]" << std::endl;
 }
 
 #endif

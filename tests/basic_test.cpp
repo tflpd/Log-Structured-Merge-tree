@@ -91,21 +91,21 @@ TEST_F(DBTest, GetFunctionality)
 }
 
 
-TEST_F(DBTest, DeleteFunctionality)
-{
-    for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
-        int key = DBTest::GetRandKey();
-        if (key == INT_MIN) {
-            cout << "DeleteFunctionality - DBTest index map is empty \n";
-            break;
-        }
-        DBTest::db.del(key);
-        DBTest::index.erase(key);
+// TEST_F(DBTest, DeleteFunctionality)
+// {
+//     for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
+//         int key = DBTest::GetRandKey();
+//         if (key == INT_MIN) {
+//             cout << "DeleteFunctionality - DBTest index map is empty \n";
+//             break;
+//         }
+//         DBTest::db.del(key);
+//         DBTest::index.erase(key);
 
-        auto p_ret = DBTest::db.get(key);
-        EXPECT_EQ(p_ret, nullptr);
-    }
-}
+//         auto p_ret = DBTest::db.get(key);
+//         EXPECT_EQ(p_ret, nullptr);
+//     }
+// }
 
 
 // TEST_F(DBTest, ScanFunctionality)

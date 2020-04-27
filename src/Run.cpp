@@ -380,23 +380,23 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
     _num_tuples = tuples.size();
 
     uint files_to_be_created = _num_tuples * getTupleBytesSize() / getSSTSize();
-    uint tuples_per_file = getSSTSize() / getTupleBytesSize();
+    uint max_tuples_per_file = getSSTSize() / getTupleBytesSize();
     if (_num_tuples * getTupleBytesSize() % getSSTSize())
         files_to_be_created++;
 
     // DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) +
     //                   " of Level#" + std::to_string(_level_id) +
     //                   ": creating #" + std::to_string(files_to_be_created) +
-    //     " file(s) with #" + std::to_string(tuples_per_file) + " tuples per file.");
+    //     " file(s) with up to #" + std::to_string(max_tuples_per_file) + " tuples per file.");
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to
         // be passed as a parameter for the creation of the file
         // TODO: Possibly this can get optimized
-        auto first = tuples.begin() + i*tuples_per_file;
-        auto last = tuples.begin() + (i + 1)*tuples_per_file;
-        if ((i + 1)*tuples_per_file > _num_tuples)
-            last = tuples.begin() + _num_tuples - i*tuples_per_file;
+        auto first = tuples.begin() + i*max_tuples_per_file;
+        auto last = tuples.begin() + (i + 1)*max_tuples_per_file;
+        if ((i + 1)*max_tuples_per_file > _num_tuples)
+            last = tuples.begin() + _num_tuples;
 
         vector<Tuple*> newTmpVec(first, last);
 

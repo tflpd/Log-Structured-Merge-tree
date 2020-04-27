@@ -131,12 +131,20 @@ TEST_F(DBTest, ScanFunctionality)
             actual = actual + to_string(ptr->GetKey()) + ", "; 
         }
         cout << actual << endl;
+        for (auto ptr : ret) {
+            auto val = ptr->GetValue();
+            cout << val.items[0] << ", " << val.items[1] << endl;
+        }
 
         string expec = "The expected scan result is: ";
         for (auto& tu : expected) {
             expec = expec + to_string(tu.GetKey()) + ", ";
         }
         cout << expec << endl;
+        for (auto& tu : expected) {
+            auto val = tu.GetValue();
+            cout << val.items[0] << ", " << val.items[1] << endl;
+        }
 
         // verify if the returned result from LSMT system equals to expected result
         

@@ -54,7 +54,9 @@ int main(int argc, char **argv)
         }
         cout << endl;
 
-        delete ret[i];
+//        cout << "EDW1" << endl;
+//        delete ret[i];
+//        cout << "EDW" << endl;
     }
 
     return 0;

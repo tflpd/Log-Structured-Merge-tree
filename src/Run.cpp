@@ -277,11 +277,13 @@ void FileMetaData::addFences(const vector<Tuple*>& tuples){
             tuples.at(i)->GetKey()));
         //std::cout << "MPIKA1" << std::endl;
     }
-    if (tuples.size() - 1 <= _fence_pointerf->getIntervalSize() + 1){
+    if (tuples.size() - 1 < _fence_pointerf->getIntervalSize() + 1){
         final_segment_size = 0;
         _fence_pointerf->AddFence(std::to_string(
                 tuples.back()->GetKey()));
-    } else{
+    }else if(tuples.size() - 1 == _fence_pointerf->getIntervalSize() + 1){
+        final_segment_size = 0;
+    }else{
         final_segment_size = (tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1);
         if (final_segment_size != 0){
             _fence_pointerf->AddFence(std::to_string(

@@ -148,7 +148,7 @@ TEST_F(DBTest, ScanFunctionality)
 
         // verify if the returned result from LSMT system equals to expected result
         
-        ASSERT_EQ(expected.size(), ret.size()); 
+        ASSERT_EQ(expected.size(), ret.size());
 
         for (int i = 0; i < expected.size(); i++) {
             int exkey = expected[i].GetKey();

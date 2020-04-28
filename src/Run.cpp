@@ -278,6 +278,8 @@ void FileMetaData::addFences(const vector<Tuple*>& tuples){
     }
     if (tuples.size() - 1 <= _fence_pointerf->getIntervalSize() + 1){
         final_segment_size = 0;
+        _fence_pointerf->AddFence(std::to_string(
+                tuples.back()->GetKey()));
     } else{
         final_segment_size = (tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1);
         if (final_segment_size != 0){

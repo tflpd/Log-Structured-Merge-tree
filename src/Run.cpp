@@ -247,10 +247,10 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
             if (key >= userAskedRange._begin && key <= userAskedRange._end
                 && !checkbits[(key - userAskedRange._begin)]) {
-                cout << "read from:" + _file_name + " the #" + std::to_string(num) + "tuple" << endl;
-                cout << key << endl;
-                cout << p_tuple->_value.items[0] << ", " << p_tuple->_value.items[1] << endl;
-                cout << p_tuple << endl;
+                // cout << "read from:" + _file_name + " the #" + std::to_string(num) + "tuple" << endl;
+                // cout << key << endl;
+                // cout << p_tuple->_value.items[0] << ", " << p_tuple->_value.items[1] << endl;
+                // cout << p_tuple << endl;
 
                 checkbits[(key - userAskedRange._begin)] = true;
                 ret[(key - userAskedRange._begin)] = p_tuple;

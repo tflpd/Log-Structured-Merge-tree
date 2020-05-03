@@ -35,6 +35,11 @@ public:
 
         return true; 
     }
+
+    bool IsDelMarker() const {
+        if (items.size() > 0) return items[0] == TERMINATION;
+        return false;
+    }
 };
 
 
@@ -61,7 +66,7 @@ public:
     std::string ToString() const;
 
     inline bool IsDelMarker() const {
-        return *_value.items.begin() == TERMINATION;
+        return _value.IsDelMarker(); 
     }
     
     void AppendBin2Vec(char* wbuf) const;

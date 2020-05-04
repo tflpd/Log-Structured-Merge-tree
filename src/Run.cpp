@@ -8,8 +8,11 @@
 #include <unistd.h>
 
 FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std::string FileName):
-        _file_pointer(File_pointer), _file_name(std::move(FileName)) {
-
+        // _file_pointer(File_pointer), _file_name(FileName) {
+        _file_pointer(File_pointer) {
+    _file_name = FileName;
+    
+    std::cout << "init fmd: " << FileName << std::endl;
     _num_tuples = tuples.size();
     _fence_pointerf = new FencePointer(getFPInterval());
 

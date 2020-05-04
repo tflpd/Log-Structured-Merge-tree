@@ -27,7 +27,6 @@ int main(int argc, char **argv)
 
     Value v5 = Value({5731, 9136});
     db.put(8, v5);
-
     Value v6 = Value({3141, 3494});
     db.put(7, v6);
     Value v7 = Value({8789, 1720});
@@ -43,10 +42,20 @@ int main(int argc, char **argv)
     db.put(14, v11);
     Value v12 = Value({3256, 1152});
     db.put(18, v12);
+
     Value v13 = Value({2935, 1599});
     db.put(30, v13);
     Value v14 = Value({3256, 1152});
     db.put(12, v14);
+    Value v15 = Value({2935, 1599});
+    db.put(11, v15);
+    Value v16 = Value({3256, 1152});
+    db.put(12, v16);
+
+    Value v17 = Value({2935, 1599});
+    db.put(46, v17);
+    Value v18 = Value({3256, 1152});
+    db.put(9, v18);
 
     vector<pair<int, int>> scan_req = {{0, 12}, {20, 35}, {4, 7}, {2, 15}, {16, 20}};
     for (int i = 0; i < scan_req.size(); i++) {

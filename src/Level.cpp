@@ -27,16 +27,11 @@ bool Level::ReadyMerge() const {
 // TODO: Ensure that tuples do not have doublicates when passed here
 bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 
-    // Add all tuples of this level in a vector
-//    for (auto& run : _runs) {
-//        auto arr = run.GetAllTuples();
-//        tuples.insert(tuples.end(), arr.begin(), arr.end());
-//    }
     // For each one of the runs of this level starting from the last/latest
     for (int i = _runs.size() - 1; i >= 0; --i) {
         // Get its tuples
         //std::cout << "EDW1 " <<  to_string(i) << endl;
-        auto runs_tuples = _runs.at(i).GetAllTuples();
+        auto runs_tuples = _runs.at(i)->GetAllTuples();
         //std::cout << "EDW2" << endl;
         // For every tuple in the vector that was dumped from the level above
         for(auto& tuple : tuples){
@@ -65,10 +60,12 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 }
 
 bool Level::_Clear() {
-    for (auto& run : _runs) 
-        run.DeleteFMD(); 
+    for (auto& pRun : _runs) {
+        pRun->DeleteFMD(); 
+        delete pRun;    
+    }
 
-    std::vector<Run> tmp;
+    std::vector<Run*> tmp;
     _runs.swap(tmp);       
     return true;
 }
@@ -164,7 +161,9 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //    }
     _Sort(tuples);
     int runSize = _runs.size();
-    _runs.emplace_back(_files_per_run, tuples, _id, runSize);
+    auto ptr = new Run(_files_per_run, tuples, _id, runSize);
+    _runs.push_back(ptr);
+    // _runs.emplace_back(_files_per_run, tuples, _id, runSize);
     // _max_runs_before_merging.emplace_back(_files_per_run, tuples, _id, _max_runs_before_merging.size());
     return true;
 }
@@ -174,7 +173,7 @@ bool Level::Scan(const Range& userAskedRange, Range& searchRange,
     bool finished = false;
     // newly added data are at the back of the vector, thus check them in a reversed order
     for (auto rit = _runs.rbegin(); rit != _runs.rend(); rit++) {
-        finished = rit->Scan(userAskedRange, searchRange, ret, checkbits);
+        finished = (*rit)->Scan(userAskedRange, searchRange, ret, checkbits);
         if (finished)
             break;
     }

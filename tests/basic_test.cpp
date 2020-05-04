@@ -16,7 +16,7 @@
 
 using namespace std;
 
-#define INIT_RECORD_CNT 100
+#define INIT_RECORD_CNT 10000
 #define MAX_KEY 5000
 #define MAX_VAL 10000
 #define GET_REQUESTS 500
@@ -58,54 +58,54 @@ protected:
 };
 
 
-// TEST_F(DBTest, GetFunctionality)
-// {
-//     for (int cnt = 0; cnt < GET_REQUESTS; cnt++) {
-//         int key = DBTest::GetRandKey();
-//         if (key == INT_MIN) {
-//             cout << "GetFunctionality - DBTest index map is empty \n";
-//             break;
-//         }
+TEST_F(DBTest, GetFunctionality)
+{
+    for (int cnt = 0; cnt < GET_REQUESTS; cnt++) {
+        int key = DBTest::GetRandKey();
+        if (key == INT_MIN) {
+            cout << "GetFunctionality - DBTest index map is empty \n";
+            break;
+        }
 
-//         auto p_ret = DBTest::db.get(key);
+        auto p_ret = DBTest::db.get(key);
 
-//         ASSERT_NE(p_ret, nullptr);
+        ASSERT_NE(p_ret, nullptr);
 
-//         auto val = p_ret->GetValue();
-//         auto pair = DBTest::index[key];
-//         Value expected({pair.first, pair.second});
-//         if (val == expected) {
-//             cout << "success!" << endl;
-//         } else {
-//             cout << "query key is: " << to_string(key) << endl;
-//             int expfirst = pair.first, expsec = pair.second;
-//             cout << expfirst << ", " << expsec << endl;
+        auto val = p_ret->GetValue();
+        auto pair = DBTest::index[key];
+        Value expected({pair.first, pair.second});
+        if (val == expected) {
+            cout << "success!" << endl;
+        } else {
+            cout << "query key is: " << to_string(key) << endl;
+            int expfirst = pair.first, expsec = pair.second;
+            cout << expfirst << ", " << expsec << endl;
 
-//             int retfirst = val.items[0], retsecond = val.items[1];
-//             cout << retfirst << ", " << retsecond << endl;
-//         }
+            int retfirst = val.items[0], retsecond = val.items[1];
+            cout << retfirst << ", " << retsecond << endl;
+        }
 
-//         EXPECT_EQ(val, expected);
-//         delete p_ret;
-//     }
-// }
+        EXPECT_EQ(val, expected);
+        delete p_ret;
+    }
+}
 
 
-// TEST_F(DBTest, DeleteFunctionality)
-// {
-//     for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
-//         int key = DBTest::GetRandKey();
-//         if (key == INT_MIN) {
-//             cout << "DeleteFunctionality - DBTest index map is empty \n";
-//             break;
-//         }
-//         DBTest::db.del(key);
-//         DBTest::index.erase(key);
+TEST_F(DBTest, DeleteFunctionality)
+{
+    for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
+        int key = DBTest::GetRandKey();
+        if (key == INT_MIN) {
+            cout << "DeleteFunctionality - DBTest index map is empty \n";
+            break;
+        }
+        DBTest::db.del(key);
+        DBTest::index.erase(key);
 
-//         auto p_ret = DBTest::db.get(key);
-//         EXPECT_EQ(p_ret, nullptr);
-//     }
-// }
+        auto p_ret = DBTest::db.get(key);
+        EXPECT_EQ(p_ret, nullptr);
+    }
+}
 
 
 TEST_F(DBTest, ScanFunctionality)

@@ -15,7 +15,8 @@ Level::Level(uint level_id):
 }
 
 Level::~Level() {
-
+    for (auto pRuns : _runs)
+        delete pRuns;
 }
 
 bool Level::ReadyMerge() const {
@@ -183,7 +184,7 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //    for(auto tup:tuples){
 //        cout << tup->GetKey() << " ";
 //    }
-    cout << endl;
+    // cout << endl;
     int runSize = _runs.size();
     auto ptr = new Run(_files_per_run, tuples, _id, runSize);
     _runs.push_back(ptr);

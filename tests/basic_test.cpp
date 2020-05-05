@@ -16,12 +16,14 @@
 
 using namespace std;
 
-#define INIT_RECORD_CNT 20
+#define INIT_RECORD_CNT 100000
 #define MAX_KEY 50
+#define MIN_KEY 1
 #define MAX_VAL 10000
-#define GET_REQUESTS 50
-#define DEL_REQUESTS 50
-#define SCAN_REQUESTS 50
+#define MIN_VAL 1
+#define GET_REQUESTS 50000
+#define DEL_REQUESTS 500
+#define SCAN_REQUESTS 50000
 #define MAX_SCAN_RANGE 30
 
 class DBTest : public ::testing::Test
@@ -47,8 +49,8 @@ protected:
 
         // populate db w. some amount of data
         for (int cnt = 0; cnt < INIT_RECORD_CNT; cnt++) {
-            int key = rand() % MAX_KEY;
-            int val1 = rand() % MAX_VAL, val2 = rand() % MAX_VAL;
+            int key = MIN_KEY + rand() % MAX_KEY;
+            int val1 = MIN_VAL + rand() % MAX_VAL, val2 = MIN_VAL + rand() % MAX_VAL;
             Value val({val1, val2});
 
             index[key] = make_pair(val1, val2);
@@ -63,7 +65,7 @@ TEST_F(DBTest, GetFunctionality)
     for (int cnt = 0; cnt < GET_REQUESTS; cnt++) {
         int key = DBTest::GetRandKey();
         if (key == INT_MIN) {
-            cout << "GetFunctionality - DBTest index map is empty \n";
+            // cout << "GetFunctionality - DBTest index map is empty \n";
             break;
         }
 
@@ -75,14 +77,14 @@ TEST_F(DBTest, GetFunctionality)
         auto pair = DBTest::index[key];
         Value expected({pair.first, pair.second});
         if (val == expected) {
-            cout << "success!" << endl;
+            // cout << "success!" << endl;
         } else {
-            cout << "query key is: " << to_string(key) << endl;
+            // cout << "query key is: " << to_string(key) << endl;
             int expfirst = pair.first, expsec = pair.second;
-            cout << expfirst << ", " << expsec << endl;
+            // cout << expfirst << ", " << expsec << endl;
 
             int retfirst = val.items[0], retsecond = val.items[1];
-            cout << retfirst << ", " << retsecond << endl;
+            // cout << retfirst << ", " << retsecond << endl;
         }
 
         EXPECT_EQ(val, expected);
@@ -96,7 +98,7 @@ TEST_F(DBTest, DeleteFunctionality)
     for (int cnt = 0; cnt < DEL_REQUESTS; cnt++) {
         int key = DBTest::GetRandKey();
         if (key == INT_MIN) {
-            cout << "DeleteFunctionality - DBTest index map is empty \n";
+            // cout << "DeleteFunctionality - DBTest index map is empty \n";
             break;
         }
         DBTest::db.del(key);
@@ -111,8 +113,8 @@ TEST_F(DBTest, DeleteFunctionality)
 TEST_F(DBTest, ScanFunctionality)
 {
     for (int cnt = 0; cnt < SCAN_REQUESTS; cnt++) {
-        cout << endl;
-        cout << endl;
+        // cout << endl;
+        // cout << endl;
         int start = GetRandKey(), end = start + rand() % MAX_SCAN_RANGE;
 
         vector<Tuple*> ret;
@@ -129,28 +131,6 @@ TEST_F(DBTest, ScanFunctionality)
             }
         }    
 
-        // verify if the returned result from LSMT system equals to expected result
-        if (expected.size() != ret.size()) {
-                string actual = "The DB actual scan result is: ";
-                for (auto ptr : ret) {
-                    actual = actual + to_string(ptr->GetKey()) + ", "; 
-                }
-                cout << actual << endl;
-                for (auto ptr : ret) {
-                    auto val = ptr->GetValue();
-                    cout << val.items[0] << ", " << val.items[1] << endl;
-                }
-
-                string expec = "The expected scan result is: ";
-                for (auto& tu : expected) {
-                    expec = expec + to_string(tu.GetKey()) + ", ";
-                }
-                cout << expec << endl;
-                for (auto& tu : expected) {
-                    auto val = tu.GetValue();
-                    cout << val.items[0] << ", " << val.items[1] << endl;
-                }
-            }
         ASSERT_EQ(expected.size(), ret.size()); 
 
         for (int i = 0; i < expected.size(); i++) {
@@ -162,27 +142,27 @@ TEST_F(DBTest, ScanFunctionality)
             auto expectedVal = expected[i].GetValue();
             auto retVal = ret[i]->GetValue();
 
-            if (!(retVal == expectedVal)) {
-                string actual = "The DB actual scan result is: ";
-                for (auto ptr : ret) {
-                    actual = actual + to_string(ptr->GetKey()) + ", "; 
-                }
-                cout << actual << endl;
-                for (auto ptr : ret) {
-                    auto val = ptr->GetValue();
-                    cout << val.items[0] << ", " << val.items[1] << endl;
-                }
+            // if (!(retVal == expectedVal)) {
+            //     string actual = "The DB actual scan result is: ";
+            //     for (auto ptr : ret) {
+            //         actual = actual + to_string(ptr->GetKey()) + ", "; 
+            //     }
+            //     cout << actual << endl;
+            //     for (auto ptr : ret) {
+            //         auto val = ptr->GetValue();
+            //         cout << val.items[0] << ", " << val.items[1] << endl;
+            //     }
 
-                string expec = "The expected scan result is: ";
-                for (auto& tu : expected) {
-                    expec = expec + to_string(tu.GetKey()) + ", ";
-                }
-                cout << expec << endl;
-                for (auto& tu : expected) {
-                    auto val = tu.GetValue();
-                    cout << val.items[0] << ", " << val.items[1] << endl;
-                }
-            }
+            //     string expec = "The expected scan result is: ";
+            //     for (auto& tu : expected) {
+            //         expec = expec + to_string(tu.GetKey()) + ", ";
+            //     }
+            //     cout << expec << endl;
+            //     for (auto& tu : expected) {
+            //         auto val = tu.GetValue();
+            //         cout << val.items[0] << ", " << val.items[1] << endl;
+            //     }
+            // }
 
             ASSERT_EQ(retVal, expectedVal);
 

@@ -16,13 +16,13 @@
 
 using namespace std;
 
-#define INIT_RECORD_CNT 10000
-#define MAX_KEY 5000
+#define INIT_RECORD_CNT 20
+#define MAX_KEY 50
 #define MAX_VAL 10000
-#define GET_REQUESTS 500
-#define DEL_REQUESTS 500
-#define SCAN_REQUESTS 1000
-#define MAX_SCAN_RANGE 100
+#define GET_REQUESTS 50
+#define DEL_REQUESTS 50
+#define SCAN_REQUESTS 50
+#define MAX_SCAN_RANGE 30
 
 class DBTest : public ::testing::Test
 {

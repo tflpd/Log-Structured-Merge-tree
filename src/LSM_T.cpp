@@ -31,14 +31,14 @@ bool LSM_T::Insert(int key, Value val) {
         int cnt = 0;
         for (auto it = _levels.begin(); it != _levels.end() && push_down; it++) {
 
-            if (it->ReadyMerge()) {
+            if ((*it)->ReadyMerge()) {
                 DEBUG_LOG(std::string("lv#") + std::to_string(cnt) + " start to merge ...");
-                it->_AddMergeRuns(tuples);
+                (*it)->_AddMergeRuns(tuples);
             }
             else {
                 DEBUG_LOG(std::string("lv#") + std::to_string(cnt) + " append a new run ...");
                 push_down = false;
-                it->AddNewRun(tuples); // create a new Run
+                (*it)->AddNewRun(tuples); // create a new Run
             }
 
             cnt++;
@@ -50,10 +50,11 @@ bool LSM_T::Insert(int key, Value val) {
             auto lv = _levels.size();
             // TODO: Probably this should be uncommented to actually create the new level
             //Parameters arg(_tuple_size, _sst_size, _a, _max_runs_before_merging);
-            _levels.emplace_back(lv);
-            auto& bottom = _levels.back();
+            auto lvptr = new Level(lv);
+            _levels.push_back(lvptr);
+            auto bottom = _levels.back();
             // DEBUG_LOG(" new level is now appending a new run ...");
-            bottom.AddNewRun(tuples);
+            bottom->AddNewRun(tuples);
         }
 
 
@@ -119,7 +120,7 @@ void LSM_T::Search(int start, int end, std::vector<Tuple*>& ret) {
     }
 
     for (auto level = _levels.begin(); level != _levels.end(); level++) {
-        finished = level->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
+        finished = (*level)->Scan(*userAskedRange, *searchRange, tmpret, checkbits);
         if (finished)
             break;
     }

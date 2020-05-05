@@ -1,7 +1,11 @@
 #include <string>
 #include <iostream>
 #include <vector>
-// #include <bits/stdc++.h> 
+
+#ifdef __linux__
+#include <bits/stdc++.h>
+#endif
+
 #include <chrono> 
 #include <stdlib.h>
 #include <time.h>

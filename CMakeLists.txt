@@ -11,7 +11,8 @@ set(templatedb_lib
         src/LSM_T.cpp
         src/Run.cpp
         src/Tuple.cpp
-        src/FencePointer.cpp)
+        src/FencePointer.cpp
+	src/FencePointerBeta.cpp)
 
 
 set(bloomfilter_lib

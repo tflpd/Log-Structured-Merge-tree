@@ -45,21 +45,21 @@ int main(int argc, char **argv)
 
     Value v13 = Value({54, 54});
     db.put(20, v13);
-    Value v14 = Value({66, 66});
-    db.put(49, v14);
-    Value v15 = Value({416, 245});
-    db.put(21, v15);
-    Value v16 = Value({645, 76});
-    db.put(15, v16);
+    // Value v14 = Value({66, 66});
+    // db.put(49, v14);
+    // Value v15 = Value({416, 245});
+    // db.put(21, v15);
+    // Value v16 = Value({645, 76});
+    // db.put(15, v16);
 
-    Value v17 = Value({8, 6});
-    db.put(21, v17);
-    Value v18 = Value({5464, 675});
-    db.put(21, v18);
-    Value v19 = Value({1, 2});
-    db.put(13, v19);
-    Value v20 = Value({3, 4});
-    db.put(38, v20);
+    // Value v17 = Value({8, 6});
+    // db.put(21, v17);
+    // Value v18 = Value({5464, 675});
+    // db.put(21, v18);
+    // Value v19 = Value({1, 2});
+    // db.put(13, v19);
+    // Value v20 = Value({3, 4});
+    // db.put(38, v20);
 
 
    vector<pair<int, int>> scan_req = {{43, 55}};

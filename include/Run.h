@@ -6,6 +6,7 @@
 #define LSM_TREE_RUN_H
 
 #include "FencePointer.h"
+#include "FencePointerBeta.h"
 #include "Buffer.h"
 #include "BloomFilter.h"
 #include "Tuple.h"
@@ -47,15 +48,16 @@ public:
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
 
 private:
-    FILE *_file_pointer;
+    FILE *_file_pointer = nullptr;
     std::string _file_name;
-    FencePointer *_fence_pointerf;
+    FencePointerBeta *_fence_pointerf = nullptr;
     uint final_segment_size;
     vector<BF::BloomFilter*> _bloom_filters;
     // The number of the tuples in this file
     int _num_tuples;
 
     // Adds/creates the fences of this file consuming the provided tuples
+    void addFencesBeta(const vector<Tuple*>& tuples);
     void addFences(const vector<Tuple*>& tuples);
     // Adds/creates the BFs (with specific parameters) of this file consuming the provided tuples
     void addBloomFilters(const vector<Tuple*>& tuples, int BF_num_elements, int BF_bits_per_element);

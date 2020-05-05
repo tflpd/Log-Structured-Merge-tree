@@ -1,6 +1,7 @@
 #include "Run.h"
 #include "Log.h"
 #include "Args.h"
+#include "FencePointerBeta.h"
 #include <fstream>
 #include <utility>
 #include <stdio.h>
@@ -14,7 +15,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std
     
     std::cout << "init fmd: " << FileName << std::endl;
     _num_tuples = tuples.size();
-    _fence_pointerf = new FencePointer(getFPInterval());
+    // _fence_pointerf = new FencePointer(getFPInterval());
 
     // TODO: Write the values in the SST file and delete them from memory
     int tupleByteSize = getTupleBytesSize();
@@ -33,7 +34,7 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std
     fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
 
     // Add a fence pointer every FP_INTERV keys
-    addFences(tuples);
+    addFencesBeta(tuples);
 
     // Add Bloom Filters of size BF_NUM_TUPLES and precision of BF_BITS_PER_ELEMENT (bit) for the keys of the tuples
     addBloomFilters(tuples, getBFNumTuples(), getBFBitsPerElement());
@@ -44,71 +45,6 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std
 
     delete[] wbuf;
 }
-
-//FileMetaData::FileMetaData(std::string FileName) : _file_name(FileName) {}
-
-//FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-//        int BF_bits_per_element, std::string FileName):
-//        _file_pointer(File_pointer), _file_name(FileName) {
-//
-//    _num_tuples = tuples.size();
-//    _fence_pointerf = new FencePointer(FP_offset_interval);
-//
-//    int tupleByteSize = getTupleBytesSize();
-//    char* wbuf = new char[_num_tuples*tupleByteSize];
-//    // std::vector<char> wbuf(_num_tuples*tupleByteSize, 0);
-//
-//    for (int i = 0; i < _num_tuples; i++) {
-//        int offset = i * tupleByteSize;
-//        auto p_tuple = tuples[i];
-//        p_tuple->AppendBin2Vec(wbuf + offset);
-//    }
-//
-//    // built-in C buffering method
-//    // can be optimized by writing our own buffer
-//    // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
-//    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
-//
-//    // Add a fence pointer every FP_offset_interval (default value) keys
-//    addFences(tuples);
-//
-//    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
-//    addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
-//
-//    // TODO: need to write fence ptr & bloomfilter to files as well
-//    // TODO: either delete tuples here or out at the Run
-//
-//    delete[] wbuf;
-//}
-
-//bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples) {
-//    _num_tuples = tuples.size();
-//    _fence_pointerf = new FencePointer(500);
-//
-//    // TODO: Write the values in the SST file using the already existing file pointer and delete them from memory
-//
-//    // Add a fence pointer every 500 (default value) keys
-//    addFences(tuples);
-//
-//    // Add Bloom Filters of size 1024 and precision of 10 (bit) (default values) for the keys of the tuples
-//    addBloomFilters(tuples, 1024, 10);
-//    return true;
-//}
-//
-//bool FileMetaData::ModifyComponentsPostMerge(const vector<Tuple*> tuples, int FP_offset_interval, int BF_num_elements,
-//                                             int BF_bits_per_element) {
-//    _num_tuples = tuples.size();
-//    _fence_pointerf = new FencePointer(FP_offset_interval);
-//
-//    // TODO: Write the values in the SST file using the already existing file pointer and delete them from memory
-//
-//    // Add a fence pointer every FP_offset_interval (default value) keys
-//    addFences(tuples);
-//
-//    // Add Bloom Filters of size BF_num_elements and precision of BF_bits_per_element (bit) for the keys of the tuples
-//    addBloomFilters(tuples, BF_num_elements, BF_bits_per_element);
-//    return true;
-//}
 
 // TODO: Check what resources need to be de allocated
 FileMetaData::~FileMetaData() {
@@ -188,15 +124,15 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
         const char* ssk = std::to_string(startKey).c_str();
         const char* sek = std::to_string(endKey).c_str();
 
-        int start1, end1;
-        int start2, end2;
+        int start1 = 0, end1 = -1;
+        int start2 = 0, end2 = -1;
 
         getTupleOffset(ssk, start1, end1);
         getTupleOffset(sek, start2, end2);
 
-        // shouldn't get -1 here, as we ensure they lie between [minKey, maxKey].
+        // shouldn't get err here, as we ensure they lie between [minKey, maxKey].
         // but make a KEYLOG here in case of any exceptions
-        if (start1 != -1 && end2 != -1) {
+        if (start1 < end2) {
             start = start1;
             // how many tuples for an interval * tuple per byte 
             end = end2;
@@ -268,6 +204,17 @@ std::string FileMetaData::getFileName() const {
     return _file_name;
 }
 
+void FileMetaData::addFencesBeta(const vector<Tuple*>& tuples) {
+    if (_fence_pointerf != nullptr) {
+        KEY_LOG(_file_name + ": fencepointer is not null while addFencesBeta is called!");
+        return;
+    } 
+
+    int fpinterval = getFPInterval();
+    _fence_pointerf = new FencePointerBeta(fpinterval);
+    _fence_pointerf->SetupFence(tuples);
+}
+
 /// It will always add at least two fence pointers, one to the start and one to the end of the passed tuples
 /// Apart from that it will add one FP after FP_INTERV tuples
 /// So for example for FP_INTERV = 2 it will add a pointer at position 0
@@ -275,25 +222,25 @@ std::string FileMetaData::getFileName() const {
 void FileMetaData::addFences(const vector<Tuple*>& tuples){
     //std::cout << _fence_pointerf->getIntervalSize() << std::endl;
     //std::cout << tuples.size() << std::endl;
-    for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize() + 1) {
-        _fence_pointerf->AddFence(std::to_string(
-            tuples.at(i)->GetKey()));
-        //std::cout << "MPIKA1" << std::endl;
-    }
-    if (tuples.size() - 1 < _fence_pointerf->getIntervalSize() + 1){
-        final_segment_size = 0;
-        _fence_pointerf->AddFence(std::to_string(
-                tuples.back()->GetKey()));
-    }else if(tuples.size() - 1 == _fence_pointerf->getIntervalSize() + 1){
-        final_segment_size = 0;
-    }else{
-        final_segment_size = (tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1);
-        if (final_segment_size != 0){
-            _fence_pointerf->AddFence(std::to_string(
-                    tuples.back()->GetKey()));
-            //std::cout << "MPIKA2" << std::endl;
-        }
-    }
+    // for (int i = 0; i < tuples.size() ; i += _fence_pointerf->getIntervalSize() + 1) {
+    //     _fence_pointerf->AddFence(std::to_string(
+    //         tuples.at(i)->GetKey()));
+    //     //std::cout << "MPIKA1" << std::endl;
+    // }
+    // if (tuples.size() - 1 < _fence_pointerf->getIntervalSize() + 1){
+    //     final_segment_size = 0;
+    //     _fence_pointerf->AddFence(std::to_string(
+    //             tuples.back()->GetKey()));
+    // }else if(tuples.size() - 1 == _fence_pointerf->getIntervalSize() + 1){
+    //     final_segment_size = 0;
+    // }else{
+    //     final_segment_size = (tuples.size() - 1) % (_fence_pointerf->getIntervalSize() + 1);
+    //     if (final_segment_size != 0){
+    //         _fence_pointerf->AddFence(std::to_string(
+    //                 tuples.back()->GetKey()));
+    //         //std::cout << "MPIKA2" << std::endl;
+    //     }
+    // }
 }
 
 void FileMetaData::addBloomFilters(const vector<Tuple*>& tuples, int BF_num_elements, int BF_bits_per_element) {
@@ -362,29 +309,17 @@ int FileMetaData::getNumTuples() const {
 }
 
 void FileMetaData::printFences() {
-    _fence_pointerf->printFences();
+    // _fence_pointerf->printFences();
 }
 
 /// Returns the offset of the tuple that is the fence right before the target tuple
 /// So the key we are looking for should be max FP_INTERV away
 /// If not found returns -1
 int FileMetaData::getTupleOffset(const char *key, int& start, int& end) {
-    //DEBUG_LOG(std::string("PRIN PRIN PERASA BF") + "");
-    for (auto & _bloom_filter : _bloom_filters) {
-        //DEBUG_LOG(std::string("PRIN PERASA BF") + "");
-        if (_bloom_filter->query(key)){
-            //DEBUG_LOG(std::string("PERASA BF") + "");
-            int index = _fence_pointerf->GetIndex(key, start, end, final_segment_size);
-            if (index >= 0){
-                start *= getTupleBytesSize();
-                end *= getTupleBytesSize();
-                return index * getTupleBytesSize();
-            }else{
-                start = end = -1;
-                return -1;
-            }
-        }
-    }
+    for (auto & _bloom_filter : _bloom_filters) 
+        if (_bloom_filter->query(key))
+            return _fence_pointerf->GetOffset(key, start, end);
+    
     return -1;
 }
 
@@ -397,11 +332,6 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
     uint max_tuples_per_file = getSSTSize() / getTupleBytesSize();
     if (_num_tuples * getTupleBytesSize() % getSSTSize())
         files_to_be_created++;
-
-    // DEBUG_LOG(std::string("Constructing Run#") + std::to_string(_run_id) +
-    //                   " of Level#" + std::to_string(_level_id) +
-    //                   ": creating #" + std::to_string(files_to_be_created) +
-    //     " file(s) with up to #" + std::to_string(max_tuples_per_file) + " tuples per file.");
 
     for (int i = 0; i < files_to_be_created; ++i) {
         // Taking the pointers that will be used to create the subvector which will be needed to
@@ -489,39 +419,3 @@ bool Run::Scan(const Range& userAskedRange, Range& searchRange,
     if (searchRange._begin > searchRange._end) return true;
     return false;
 }
-
-/// Returns the bytes offset of the tuple that is the fence right before the target tuple
-/// So the key we are looking for should be max FP_INTERV away
-/// If not found returns -1
-//int Run::getTupleOffset(const char *key) {
-//    for (int i = 0; i < _files.size(); ++i) {
-//        int tuple_offset = _files.at(i)->getTupleOffset(key);
-//        if (tuple_offset >= 0)
-//            return tuple_offset;
-//    }
-//    return -1;
-//}
-
-// A very complex thought to avoid recreating files when we merge some runs in a single run let's not thinks about it yet
-//bool Run::ModifyFMDsComponents(uint files_per_run, const vector<Tuple> &tuples, const Parameters &_par) {
-//    _num_tuples = tuples.size();
-//    uint existing_file_num = _num_tuples * _par.getTupleByteSize() / _par.getSstSize();
-//    uint tuples_per_file = _par.getSstSize() / _par.getTupleByteSize();
-//    if (_num_tuples * _par.getTupleByteSize() % _par.getSstSize())
-//        existing_file_num++;
-//
-//    for (int i = 0; i < existing_file_num; ++i) {
-//        // Taking the pointers that will be used to create the subvector which will be needed to
-//        // be passed as a parameter for the creatio of the file
-//        // TODO: Possibly this can get optimized
-//        auto first = tuples.begin() + i*tuples_per_file;
-//        auto last = tuples.begin() + (i + 1)*tuples_per_file;
-//        if ((i + 1)*tuples_per_file > _num_tuples)
-//            last = tuples.begin() + _num_tuples - i*tuples_per_file;
-//        vector<Tuple> newTmpVec(first, last);
-//
-//        if (!_files.at(i)->ModifyComponentsPostMerge(newTmpVec))
-//            exit(-1);
-//    }
-//    return true;
-//}

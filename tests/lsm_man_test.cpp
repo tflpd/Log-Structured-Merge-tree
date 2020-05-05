@@ -57,24 +57,24 @@ int main(int argc, char **argv)
     Value v18 = Value({3256, 1152});
     db.put(9, v18);
 
-    vector<pair<int, int>> scan_req = {{0, 12}, {20, 35}, {4, 7}, {2, 15}, {16, 20}};
-    for (int i = 0; i < scan_req.size(); i++) {
-        std::vector<Tuple*> ret;
-        int start = scan_req[i].first, end = scan_req[i].second;
-        db.scan(start, end, ret);
-        cout << "scan range is:[" << start << ", " << end << "]" << endl;
-        for (int i = 0; i < ret.size(); i++) {
-            int key = ret[i]->GetKey();
-            cout << key << endl;
-            cout << ret[i]->_value.items[0] << ", " << ret[i]->_value.items[1] << endl; 
-            cout << ret[i] << endl;
-        }
-        cout << endl;
-
-//        cout << "EDW1" << endl;
-//        delete ret[i];
-//        cout << "EDW" << endl;
-    }
+//    vector<pair<int, int>> scan_req = {{0, 12}, {20, 35}, {4, 7}, {2, 15}, {16, 20}};
+//    for (int i = 0; i < scan_req.size(); i++) {
+//        std::vector<Tuple*> ret;
+//        int start = scan_req[i].first, end = scan_req[i].second;
+//        db.scan(start, end, ret);
+//        cout << "scan range is:[" << start << ", " << end << "]" << endl;
+//        for (int i = 0; i < ret.size(); i++) {
+//            int key = ret[i]->GetKey();
+//            cout << key << endl;
+//            cout << ret[i]->_value.items[0] << ", " << ret[i]->_value.items[1] << endl;
+//            cout << ret[i] << endl;
+//        }
+//        cout << endl;
+//
+////        cout << "EDW1" << endl;
+////        delete ret[i];
+////        cout << "EDW" << endl;
+//    }
 
     return 0;
 }

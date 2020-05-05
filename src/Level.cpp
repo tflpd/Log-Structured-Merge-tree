@@ -30,24 +30,21 @@ bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
     // For each one of the runs of this level starting from the last/latest
     for (int i = _runs.size() - 1; i >= 0; --i) {
         // Get its tuples
-        //std::cout << "EDW1 " <<  to_string(i) << endl;
         auto runs_tuples = _runs.at(i)->GetAllTuples();
-        //std::cout << "EDW2" << endl;
         // For every tuple in the vector that was dumped from the level above
-        for(auto& tuple : tuples){
-            //std::cout << "EDW3" << endl;
-            // Try to get the position of this tuple in the run we are going through right now
-            // using binary search since each run is already sorted
-            auto it = std::lower_bound(
-                    runs_tuples.begin(), runs_tuples.end(), tuple,
-                    [](Tuple *t1, Tuple *t) { return t1->GetKey() < t->GetKey(); });
-            // If we actually found the position of a tuple with the same key in the run we
-            // are currently going through
-            if ( it != runs_tuples.end() && (*it)->GetKey() == tuple->GetKey() ){
-                // Then delete this tuple since we have already a "fresher" value of it
-                runs_tuples.erase(it);
-            }
-        }
+//        for(auto& tuple : tuples){
+//            // Try to get the position of this tuple in the run we are going through right now
+//            // using binary search since each run is already sorted
+//            auto it = std::lower_bound(
+//                    runs_tuples.begin(), runs_tuples.end(), tuple,
+//                    [](Tuple *t1, Tuple *t) { return t1->GetKey() < t->GetKey(); });
+//            // If we actually found the position of a tuple with the same key in the run we
+//            // are currently going through
+//            if ( it != runs_tuples.end() && (*it)->GetKey() == tuple->GetKey() ){
+//                // Then delete this tuple since we have already a "fresher" value of it
+//                runs_tuples.erase(it);
+//            }
+//        }
         // After we have deleted all the tuples that have "fresher" values
         // we can merge the rest to the "tuples" vector and continue the process
         // for the rest of the runs
@@ -75,6 +72,11 @@ bool Level::_Clear() {
 // Second subarray is tuples[mid+1..right]
 void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, unsigned long right)
 {
+//    cout << "Before:" << endl;
+//    for(auto tup:tuples){
+//        cout << tup->GetKey() << " ";
+//    }
+//    cout << endl;
     unsigned long i, j, k;
     unsigned long n1 = mid - left + 1;
     unsigned long n2 = right - mid;
@@ -87,9 +89,9 @@ void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, u
 
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++)
-        L[i] = (tuples)[left + i];
+        L.push_back((tuples)[left + i]);
     for (j = 0; j < n2; j++)
-        R[j] = (tuples)[mid + 1 + j];
+        R.push_back((tuples)[mid + 1 + j]);
 
     /* Merge the temp arrays back into tuples[left..right]*/
     i = 0; // Initial index of first subarray
@@ -97,17 +99,19 @@ void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, u
     k = left; // Initial index of merged subarray
     while (i < n1 && j < n2)
     {
+        //cout << L[i]->GetKey() << " <= " << R[j]->GetKey() << endl;
         if (L[i]->GetKey() <= R[j]->GetKey())
         {
             (tuples)[k] = L[i];
             i++;
+            k++;
         }
         else
         {
             (tuples)[k] = R[j];
             j++;
+            k++;
         }
-        k++;
     }
 
     /* Copy the remaining elements of L[], if there
@@ -127,6 +131,11 @@ void merge(std::vector<Tuple*>& tuples, unsigned long left, unsigned long mid, u
         j++;
         k++;
     }
+//    cout << "After:" << endl;
+//    for(auto tup:tuples){
+//        cout << tup->GetKey() << " ";
+//    }
+//    cout << endl;
 }
 
 /* left is for left index and right is right index of the
@@ -149,6 +158,16 @@ void mergeSort(std::vector<Tuple*>& arr, unsigned long left, unsigned long right
 
 void Level::_Sort(vector<Tuple*>& tuples) {
     mergeSort(tuples, 0, tuples.size() - 1);
+    vector<Tuple*> newTuples;
+    int j = 0;
+    newTuples.push_back(tuples.at(0));
+    for (int i = 1; i < tuples.size(); i++){
+        if (newTuples.at(j)->GetKey() != tuples.at(i)->GetKey()){
+            newTuples.push_back(tuples.at(i));
+            j++;
+        }
+    }
+    tuples = newTuples;
 }
 
 
@@ -160,6 +179,11 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //
 //    }
     _Sort(tuples);
+//    cout << "After3:" << endl;
+//    for(auto tup:tuples){
+//        cout << tup->GetKey() << " ";
+//    }
+    cout << endl;
     int runSize = _runs.size();
     auto ptr = new Run(_files_per_run, tuples, _id, runSize);
     _runs.push_back(ptr);

@@ -23,6 +23,9 @@ bool LSM_T::Insert(int key, Value val) {
     if (!ret) {
         // DEBUG_LOG("In-memory buffer is filled out!");
         auto tuples = _buf->GetTuples();
+        // During the sort merge we want to have always on th leftmost part
+        // the latest values
+        reverse(tuples.begin(), tuples.end());
         bool push_down = true;
 
         int cnt = 0;

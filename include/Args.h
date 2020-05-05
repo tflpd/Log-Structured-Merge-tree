@@ -5,8 +5,8 @@
 #ifndef NDEBUG
 	// values dedicated for debugging
 	#define SST_SIZE     48 /// Size of an sst file in BYTES
-	#define CARRY       10
-	#define MAX_RUNS_BEFORE_MERGE     4
+	#define CARRY       1
+	#define MAX_RUNS_BEFORE_MERGE     2
 	#define A 			1
 #else  
 	#define SST_SIZE     48

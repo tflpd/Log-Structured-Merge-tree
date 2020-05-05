@@ -16,6 +16,14 @@ LSM_T::LSM_T(int SSTSize, int tupleSize, int a, int runs):
     _buf = new Buffer(bufsize);
 }
 
+LSM_T::~LSM_T() {
+    for (auto plevel : _levels)
+        delete plevel;
+
+    delete _buf;
+}
+
+
 bool LSM_T::Insert(int key, Value val) {
     auto ret = _buf->Append(key, val);
 
@@ -129,5 +137,3 @@ void LSM_T::Search(int start, int end, std::vector<Tuple*>& ret) {
     delete userAskedRange;
     delete searchRange;    
 }
-
-LSM_T::~LSM_T() {}

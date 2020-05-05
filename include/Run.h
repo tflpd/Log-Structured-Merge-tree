@@ -18,7 +18,7 @@ struct FileMetaData
 {
 public:
     // Default constructor
-    FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std::string FileName);
+    FileMetaData(const vector<Tuple*>& tuples, std::string FileName);
 
     // will be called from failure/reboot recovery
     FileMetaData(std::string FileName);

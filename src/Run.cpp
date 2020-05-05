@@ -8,12 +8,8 @@
 // #include <fcntl.h>
 #include <unistd.h>
 
-FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std::string FileName):
-        // _file_pointer(File_pointer), _file_name(FileName) {
-        _file_pointer(File_pointer) {
+FileMetaData::FileMetaData(const vector<Tuple*>& tuples, std::string FileName){
     _file_name = FileName;
-    
-    std::cout << "init fmd: " << FileName << std::endl;
     _num_tuples = tuples.size();
     // _fence_pointerf = new FencePointer(getFPInterval());
 
@@ -31,7 +27,9 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std
     // built-in C buffering method
     // can be optimized by writing our own buffer
     // setvbuf(FILE *restrict stream, char *restrict buf, int type, size_t size)
-    fwrite(wbuf, 1, _num_tuples*tupleByteSize, File_pointer);
+    FILE* fp = fopen(_file_name.c_str(), "wb");
+    fwrite(wbuf, 1, _num_tuples*tupleByteSize, fp);
+    fclose(fp);
 
     // Add a fence pointer every FP_INTERV keys
     addFencesBeta(tuples);
@@ -49,9 +47,8 @@ FileMetaData::FileMetaData(FILE *File_pointer, const vector<Tuple*>& tuples, std
 // TODO: Check what resources need to be de allocated
 FileMetaData::~FileMetaData() {
     delete _fence_pointerf;
-    for (auto & _bloom_filter : _bloom_filters) {
+    for (auto _bloom_filter : _bloom_filters) 
         delete _bloom_filter;
-    }
 }
 
 void FileMetaData::fastBFIndex(const Range& userAskedRange, Range& searchRange, 
@@ -114,7 +111,7 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
     int startKey = (suggestRange._begin >= minKey) ? suggestRange._begin : minKey;  
     int endKey = (suggestRange._end <= maxKey) ? suggestRange._end : maxKey;
     std::string log2 = _file_name + " -> After doing intersection, the suggested start key of FP is: #" + to_string(startKey) +
-        ", the suggested max key of this FP is: #" + to_string(endKey);
+        ", the suggested end key of this FP is: #" + to_string(endKey);
 
     DEBUG_LOG(log1);
     DEBUG_LOG(log2);
@@ -130,16 +127,15 @@ void FileMetaData::fastFPIndex(const Range& userAskedRange, Range& suggestRange,
         getTupleOffset(ssk, start1, end1);
         getTupleOffset(sek, start2, end2);
 
-        // shouldn't get err here, as we ensure they lie between [minKey, maxKey].
-        // but make a KEYLOG here in case of any exceptions
         if (start1 < end2) {
             start = start1;
             // how many tuples for an interval * tuple per byte 
             end = end2;
         } else {
-            std::string log = _file_name + " -> unexpected err occur when startKey = " + std::to_string(startKey) +
-                " and endKey = " + std::to_string(endKey);
-            KEY_LOG(log);
+            std::string log = _file_name + " -> trigger NOT FOUND when start1 = " + std::to_string(start1) +
+                " end1 = " + std::to_string(end1) + "start2 = " + 
+                std::to_string(start2) + " end2 = " + std::to_string(end2);
+            DEBUG_LOG(log);
         }
     }
 
@@ -291,10 +287,7 @@ vector<Tuple*> FileMetaData::GetAllTuples() {
 
         ret.push_back(p_tuple);
     }
-
     fclose(fp);
-    // for (auto p_tuple : ret)
-    //     cout << p_tuple->ToString() << endl;
 
     delete[] tmpbuf;
     return ret;
@@ -309,7 +302,7 @@ int FileMetaData::getNumTuples() const {
 }
 
 void FileMetaData::printFences() {
-    // _fence_pointerf->printFences();
+    _fence_pointerf->printFences();
 }
 
 /// Returns the offset of the tuple that is the fence right before the target tuple
@@ -353,9 +346,9 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
 }
 
 Run::~Run() {
-    for (auto & _file : _files) {
+    DeleteFMD();
+    for (auto & _file : _files) 
         delete _file;
-    }
 }
 
 bool Run::DeleteFMD() {
@@ -386,13 +379,9 @@ bool Run::AddNewFMD(vector<Tuple*>& tuples, int level_id, int run_id) {
         "file" + std::to_string(fdSerialID) + ".sst");
     DEBUG_LOG(std::string("starting add new FMD of file#") + fileName);
 
-    FILE* fp = fopen(fileName.c_str(), "wb");
-    auto *tmpFMD = new FileMetaData(fp, tuples, fileName);
+    auto *tmpFMD = new FileMetaData(tuples, fileName);
     tmpFMD->printFences();
-    fclose(fp);
-
     _files.push_back(tmpFMD);
-    //DEBUG_LOG(std::string("Requesting byte offset for key 9") + std::to_string(getTupleOffset("9")));
     return true;
 }
 

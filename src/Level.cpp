@@ -15,7 +15,8 @@ Level::Level(uint level_id):
 }
 
 Level::~Level() {
-
+    for (auto pRuns : _runs)
+        delete pRuns;
 }
 
 bool Level::ReadyMerge() const {

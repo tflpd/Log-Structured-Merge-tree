@@ -40,7 +40,7 @@ public:
     int getIntervalSize() const;
 
     void SetupFence(const std::vector<Tuple*>& tuples);
-    // void printFences();
+    void printFences() const;
 private:
     std::vector<Fence> _fences;
     int _interval_size;

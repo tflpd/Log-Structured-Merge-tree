@@ -16,12 +16,12 @@
 
 using namespace std;
 
-#define INIT_RECORD_CNT 20
+#define INIT_RECORD_CNT 10000
 #define MAX_KEY 50
 #define MAX_VAL 10000
-#define GET_REQUESTS 50
+#define GET_REQUESTS 500
 #define DEL_REQUESTS 50
-#define SCAN_REQUESTS 50
+#define SCAN_REQUESTS 500
 #define MAX_SCAN_RANGE 30
 
 class DBTest : public ::testing::Test
@@ -151,6 +151,7 @@ TEST_F(DBTest, ScanFunctionality)
                     cout << val.items[0] << ", " << val.items[1] << endl;
                 }
             }
+
         ASSERT_EQ(expected.size(), ret.size()); 
 
         for (int i = 0; i < expected.size(); i++) {

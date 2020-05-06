@@ -10,15 +10,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <numeric>
+#include "Args.h"
 #include "Tuple.h"
 #include "Database.hpp"
 
+
 #define TOTAL_OPERATION 500000
-#define READ_PERCENT  0.8
+#define READ_PERCENT  0.2
 #define GET_PERCENT   0.5
 #define SCAN_PERCENT  0.5
 
-#define WRITE_PERCENT 0.2
+#define WRITE_PERCENT 0.8
 #define PUT_PERCENT   0.5
 #define DEL_PERCENT   0.5
 
@@ -27,7 +29,7 @@
 #define OPERATION_CODE_DELETE 2
 #define OPERATION_CODE_PUT    3
 
-#define KEY_MAX 10000
+#define KEY_MAX 1000000
 #define KEY_MIN 1
 #define VALUE_MAX 100000
 #define VALUE_MIN 1
@@ -102,6 +104,8 @@ public:
              // << time_taken << setprecision(9); 
              << time_taken;
         cout << " ms" << endl; 
+        cout << "The sst size is: " << getSSTSize() << " bytes" << endl;
+        cout << "The maximum Runs before merging is: " << getMaxRunsBeforeMerge() << endl;
     }
 
     // if we generate a random number and then check if cnt[rand] eq to 0, it could lead to 

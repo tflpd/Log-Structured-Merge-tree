@@ -346,7 +346,7 @@ Run::Run(uint files_per_run, vector<Tuple*>& tuples, int Level_id, int Run_id):
 }
 
 Run::~Run() {
-    // DeleteFMD();
+    DeleteFMD();
     for (auto & _file : _files) 
         delete _file;
 }

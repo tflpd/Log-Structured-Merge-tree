@@ -39,8 +39,6 @@ FileMetaData::FileMetaData(const vector<Tuple*>& tuples, std::string FileName){
 
     // TODO: need to write fence ptr & bloomfilter to files as well
     // TODO: either delete tuples here or out at the Run
-
-
     delete[] wbuf;
 }
 
@@ -189,8 +187,10 @@ void FileMetaData::Collect(const Range& userAskedRange, Range& searchRange,
 
                 checkbits[(key - userAskedRange._begin)] = true;
                 ret[(key - userAskedRange._begin)] = p_tuple;
-            } else
+            // }
+            } else {
                 delete p_tuple;
+            }
         }
 
     }

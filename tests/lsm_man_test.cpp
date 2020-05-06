@@ -17,22 +17,22 @@ int main(int argc, char **argv)
     templatedb::DB db;
     
     Value v1 = Value({1, 1});
-    db.put(28, v1);
-    Value v2 = Value({1,1});
-    db.put(21, v2);
-    Value v3 = Value({2, 2});
-    db.put(28, v3);
-    Value v4 = Value({1, 1});
-    db.put(13, v4);
+    db.put(0, v1);
+    Value v2 = Value({2,2});
+    db.put(0, v2);
+    Value v3 = Value({3, 3});
+    db.put(0, v3);
+    Value v4 = Value({4, 4});
+    db.put(0, v4);
 
-    Value v5 = Value({1, 1});
-    db.put(49, v5);
-    Value v6 = Value({1, 1});
-    db.put(18, v6);
-    Value v7 = Value({1, 1});
-    db.put(39, v7);
-    Value v8 = Value({1, 1});
-    db.put(43, v8);
+    Value v5 = Value({5, 6});
+    db.put(0, v5);
+    Value v6 = Value({5, 6});
+    db.put(0, v6);
+    Value v7 = Value({7, 8});
+    db.put(0, v7);
+    Value v8 = Value({9, 10});
+    db.put(0, v8);
 
     Value v9 = Value({1, 1});
     db.put(4, v9);
@@ -56,13 +56,13 @@ int main(int argc, char **argv)
     db.put(26, v17);
     Value v18 = Value({2, 2});
     db.put(20, v18);
-    Value v19 = Value({3, 3});
-    db.put(20, v19);
+    Value v19 = Value({20, 20});
+    db.put(2, v19);
     Value v20 = Value({1, 1});
     db.put(18, v20);
 
 
-   vector<pair<int, int>> scan_req = {{41, 46}};
+   vector<pair<int, int>> scan_req = {{0, 6}};
    for (int i = 0; i < scan_req.size(); i++) {
        std::vector<Tuple*> ret;
        int start = scan_req[i].first, end = scan_req[i].second;

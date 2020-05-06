@@ -184,7 +184,7 @@ bool Level::AddNewRun(vector<Tuple*>& tuples) {
 //    for(auto tup:tuples){
 //        cout << tup->GetKey() << " ";
 //    }
-    cout << endl;
+    // cout << endl;
     int runSize = _runs.size();
     auto ptr = new Run(_files_per_run, tuples, _id, runSize);
     _runs.push_back(ptr);

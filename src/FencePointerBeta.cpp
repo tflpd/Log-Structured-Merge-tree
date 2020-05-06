@@ -55,10 +55,10 @@ int FencePointerBeta::getIntervalSize() const {
 }
 
 void FencePointerBeta::printFences() const {
-    for (int index = 0; index < _fences.size(); index++) {
-        auto fence = _fences[index];
-        std::cout << "#" << index << " fence from (" << fence.min << "to " << fence.max << ")"; 
-        std::cout << " total byte length is " << fence.byteSize;
-        std::cout << " offset starts at " << fence.offset << std::endl;
-    }
+    // for (int index = 0; index < _fences.size(); index++) {
+    //     auto fence = _fences[index];
+    //     std::cout << "#" << index << " fence from (" << fence.min << "to " << fence.max << ")"; 
+    //     std::cout << " total byte length is " << fence.byteSize;
+    //     std::cout << " offset starts at " << fence.offset << std::endl;
+    // }
 }

@@ -11,8 +11,8 @@
 	// while(0)
 #endif
 
-#define KEY_LOG(x) do { std::cerr << x << std::endl; } while(0)
-//#define KEY_LOG(x) ""
+// #define KEY_LOG(x) do { std::cerr << x << std::endl; } while(0)
+#define KEY_LOG(x) ""
 
 #include "Args.h"
 

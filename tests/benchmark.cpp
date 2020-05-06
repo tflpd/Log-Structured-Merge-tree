@@ -13,8 +13,7 @@
 #include "Tuple.h"
 #include "Database.hpp"
 
-// #define TOTAL_OPERATION 5000
-#define TOTAL_OPERATION 50000
+#define TOTAL_OPERATION 500000
 #define READ_PERCENT  0.8
 #define GET_PERCENT   0.5
 #define SCAN_PERCENT  0.5
@@ -28,8 +27,10 @@
 #define OPERATION_CODE_DELETE 2
 #define OPERATION_CODE_PUT    3
 
-#define KEY_MAX 100
-#define VALUE_MAX 10000
+#define KEY_MAX 10000
+#define KEY_MIN 1
+#define VALUE_MAX 100000
+#define VALUE_MIN 1
 #define SCAN_RANGE_LIMIT 50
 
 struct OperationBase {
@@ -45,7 +46,7 @@ struct OperationBase {
 struct OperationGetDel : OperationBase {
     int Key;
     OperationGetDel(int code) : OperationBase(code) {
-        Key = rand() % KEY_MAX;
+        Key = KEY_MIN + rand() % KEY_MAX;
     }
 
     void execute() {
@@ -60,8 +61,8 @@ struct OperationPut : OperationBase {
     int Key;
     Value Val;
     OperationPut(int code) : OperationBase(code) {
-        Key = rand() % KEY_MAX;
-        Val = Value({rand() % VALUE_MAX, rand() % VALUE_MAX});
+        Key = KEY_MIN + rand() % KEY_MAX;
+        Val = Value({VALUE_MIN + rand() % VALUE_MAX, VALUE_MIN + rand() % VALUE_MAX});
     }
     void execute() {
         if (pDB == nullptr) return;
@@ -72,8 +73,8 @@ struct OperationPut : OperationBase {
 struct OperationScan : OperationBase {
     int startKey, endKey;
     OperationScan(int code) : OperationBase(code) {
-        startKey = rand() % KEY_MAX;
-        endKey = startKey + rand() % SCAN_RANGE_LIMIT + 1;
+        startKey = KEY_MIN + rand() % KEY_MAX;
+        endKey = KEY_MIN + startKey + rand() % SCAN_RANGE_LIMIT + 1;
     }
     void execute() {
         if (pDB == nullptr) return;

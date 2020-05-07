@@ -17,7 +17,7 @@
 using namespace std;
 
 #define INIT_RECORD_CNT 100000
-#define MAX_KEY 50
+#define MAX_KEY 5000
 #define MIN_KEY 1
 #define MAX_VAL 10000
 #define MIN_VAL 1

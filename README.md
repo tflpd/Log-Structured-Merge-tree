@@ -1,10 +1,10 @@
-# LSM Tree Implementation
+# Adaptive Range Scan LSM Tree
 
-Contributor: Chengjun Wu, Thanasis Filippidis
+Contributors: Chengjun Wu, Thanasis Filippidis
 -------------------------------------------------------------
 
-- What to expect?
-Our system only uses C++ standard libraries and googletest as external libraries, depending largely on the codes written on our own. We also explore the usages of make and cmake to bring cross-platform convenience as IDE compilation somehow get stuck when transplanting codes to another platforms.
+- What to expect?  
+Our system only uses C++ standard libraries and googletest as external libraries, depending largely on the codes written on our own. We also explore the usages of make and cmake to bring cross-platform convenience as IDE compilation somehow could lead to issues when transplanting codes to another platforms.
 
 
 - How to compile & run? 
@@ -21,3 +21,7 @@ Our system only uses C++ standard libraries and googletest as external libraries
 - benchmark: This file is mainly for benchmarking the system with different control knobs. However, you have to tune the knobs manually at /include/Args.h to see distinct experiment results(the latency change). We recommend to play around with MAX_RUNS_BEFORE_MERGE, FP_INTERV, BF_NUM_TUPLES, BF_BITS_PER_ELEMENT at /include/Args.h in order to see how performance react against to those.
 
 - basic_test: This is the part we used to test correctness of functionalities of PUTs, GETs, DELs, and SCANs coordinating with googletest framework. You can see the test result directory from console by execuating it.
+
+## System report  
+
+For an in detail report that includes the motivation behind LSM Trees, the main components of our LSM Tree and the innovation in it as well as its performaance feel free to take a look at the FinalReport.pdf

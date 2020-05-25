@@ -25,10 +25,9 @@ LSM_T::~LSM_T() {
 
 
 bool LSM_T::Insert(int key, Value val) {
-    auto ret = _buf->Append(key, val);
+    auto has_space = _buf->Append(key, val);
 
-    // if (_buf->IsFull()) {
-    if (!ret) {
+    if (!has_space) {
         // DEBUG_LOG("In-memory buffer is filled out!");
         auto tuples = _buf->GetTuples();
         // During the sort merge we want to have always on th leftmost part
@@ -66,7 +65,7 @@ bool LSM_T::Insert(int key, Value val) {
         }
 
 
-        // check if memory leak
+        // check for memory leak
         _buf->Clear();
         auto retRedo = _buf->Append(key, val);
         if (!retRedo) {

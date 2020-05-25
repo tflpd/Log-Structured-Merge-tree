@@ -5,8 +5,8 @@
 #ifndef NDEBUG
 	// values dedicated for debugging
 	#define SST_SIZE     48 /// Size of an sst file in BYTES
-	#define CARRY       50
-	#define MAX_RUNS_BEFORE_MERGE     3
+	#define CARRY       50 /// The real sst size will be the above times CARRY^2
+	#define MAX_RUNS_BEFORE_MERGE     3 /// Every level will merge after the creation of the MAX_RUNS_BEFORE_MERGE run in it
 	#define A 			1
 #else  
 	#define SST_SIZE     48	
@@ -18,12 +18,12 @@
 #define SIZEOFINT          4
 #define PAGESIZE        4096
 #define WRITEBUFCAP     4096
-#define MAX_TUPLE_KEYS_CNTS    1
-#define MAX_TUPLE_VALUES_CNTS   2
+#define MAX_TUPLE_KEYS_CNTS    1 /// The number of keys per tuple
+#define MAX_TUPLE_VALUES_CNTS   2 /// The number of values per tuple
 #define FP_INTERV 50 /// DETERMINES HOW MANY KEYS WILL EXIST BETWEEN TWO FENCE POINTERS. E.G. IF WE HAVE THE 1 4 5 6 KEYS IN A RUN AND AN INTERVAL = 1 THEN THE FPS WILL BE 1, 5, 6
 #define BF_NUM_TUPLES 4*CARRY*CARRY /// FOR NOW this should be a one to one relation to the sst size - so one bf per file
-#define BF_BITS_PER_ELEMENT 8 /// The relation between BF_NUM_TUPLES and BF_BITS_PER_ELEMENT should be ~ 10:1
-#define LEVELS_SIZE_RATIO 2 /// So for example level one runs will be equal to size ratio * level0_runs or equally level one tuples will be equal to size ratio * level0_tuples
+#define BF_BITS_PER_ELEMENT 8 /// This determines the precision of the Bloom filters, more bits per element leads to higher precision, 32 bits would lead to each integer be represented fully
+#define LEVELS_SIZE_RATIO 2 /// So for example, level1's runs will be equal to size ratio * level0_runs or equally level1's tuples will be equal to size ratio * level0_tuples
 
 #ifdef __linux__
 #include <bits/stdc++.h>

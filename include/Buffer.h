@@ -30,5 +30,4 @@ public:
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
 };
 
-// #include "Buffer.cpp"
 #endif //LSM_TREE_BUFFER_H

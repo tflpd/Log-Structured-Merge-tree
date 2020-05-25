@@ -24,4 +24,4 @@ Our system only uses C++ standard libraries and googletest as external libraries
 
 ## System report  
 
-For an in detail report that includes the motivation behind LSM Trees, the main components of our LSM Tree and the innovation in it as well as its performaance feel free to take a look at the FinalReport.pdf
+For an in detail report that includes the motivation behind LSM Trees, the main components of our LSM Tree and the innovation in it as well as its performaance feel free to take a look at the [final report](FinalReport.pdf)

@@ -26,7 +26,6 @@ private:
     std::list<Level*> _levels;
     Buffer* _buf = nullptr;
     /* used for saving temporary data obtained after each merge, reducing one disk IO */
-    //Buffer* _auxiliary_buf = nullptr;
     int _tuple_size;
     int _sst_size; /// Size of an sst file in BYTES
     int _a; // buf size = _a * _sst_size;

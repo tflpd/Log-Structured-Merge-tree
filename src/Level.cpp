@@ -6,8 +6,6 @@
 
 Level::Level(uint level_id):
         _id(level_id) {
-    // calculate _fp_per_run
-    //_files_per_run = _par.getTuplesLevel0() * pow(_par.getSizeRatio(), level_id)  / _par.getSstSize();
     _files_per_run = getBufferBytesSize() * getMaxRunsBeforeMerge() * pow(getLevelSizeRatio(), level_id)  / getSSTSize();
     if (_files_per_run == 0)
         _files_per_run++;
@@ -23,35 +21,18 @@ bool Level::ReadyMerge() const {
     return getMaxRunsBeforeMerge() == _runs.size() + 1;
 }
 
-/* the data to be pushed down is able to fit into memory */
+/* assuming that the data to be pushed down is able to fit into memory */
 // Takes the vector tuples and adds to it all the tuples of the runs of the below level to this vector
-// TODO: Ensure that tuples do not have doublicates when passed here
 bool Level::_AddMergeRuns(vector<Tuple*>& tuples) {
 
     // For each one of the runs of this level starting from the last/latest
     for (int i = _runs.size() - 1; i >= 0; --i) {
         // Get its tuples
         auto runs_tuples = _runs.at(i)->GetAllTuples();
-        // For every tuple in the vector that was dumped from the level above
-//        for(auto& tuple : tuples){
-//            // Try to get the position of this tuple in the run we are going through right now
-//            // using binary search since each run is already sorted
-//            auto it = std::lower_bound(
-//                    runs_tuples.begin(), runs_tuples.end(), tuple,
-//                    [](Tuple *t1, Tuple *t) { return t1->GetKey() < t->GetKey(); });
-//            // If we actually found the position of a tuple with the same key in the run we
-//            // are currently going through
-//            if ( it != runs_tuples.end() && (*it)->GetKey() == tuple->GetKey() ){
-//                // Then delete this tuple since we have already a "fresher" value of it
-//                runs_tuples.erase(it);
-//            }
-//        }
-        // After we have deleted all the tuples that have "fresher" values
-        // we can merge the rest to the "tuples" vector and continue the process
-        // for the rest of the runs
+        // And add them to the aggregate vector that will hold all the tuples of the new level
         tuples.insert(tuples.end(), runs_tuples.begin(), runs_tuples.end());
     }
-
+    // Delete the runs that were consumed to create the new level
     _Clear();
 
     return true;
@@ -162,6 +143,7 @@ void Level::_Sort(vector<Tuple*>& tuples) {
     vector<Tuple*> newTuples;
     int j = 0;
     newTuples.push_back(tuples.at(0));
+    // Remove any duplicates keeping always the left most element as it is the most new
     for (int i = 1; i < tuples.size(); i++){
         if (newTuples.at(j)->GetKey() != tuples.at(i)->GetKey()){
             newTuples.push_back(tuples.at(i));
@@ -174,22 +156,10 @@ void Level::_Sort(vector<Tuple*>& tuples) {
 
 bool Level::AddNewRun(vector<Tuple*>& tuples) {
     _curr_tuples_n += tuples.size();
-//    if (_max_runs_before_merging.size() == _par.getMaxMergeRuns()){
-//        _AddMergeRuns(tuples);
-//    }else{
-//
-//    }
     _Sort(tuples);
-//    cout << "After3:" << endl;
-//    for(auto tup:tuples){
-//        cout << tup->GetKey() << " ";
-//    }
-    // cout << endl;
     int runSize = _runs.size();
     auto ptr = new Run(_files_per_run, tuples, _id, runSize);
     _runs.push_back(ptr);
-    // _runs.emplace_back(_files_per_run, tuples, _id, runSize);
-    // _max_runs_before_merging.emplace_back(_files_per_run, tuples, _id, _max_runs_before_merging.size());
     return true;
 }
 

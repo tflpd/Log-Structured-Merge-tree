@@ -8,7 +8,6 @@
 #include <vector>
 #include "Args.h"
 #include "Run.h"
-#include "Parameters.h"
 #include "Buffer.h"
 
 class Level {
@@ -32,7 +31,6 @@ private:
 
 private:
     uint _id;
-    //uint _max_runs; // maximum runs allowed before merging
     uint _curr_tuples_n; // amount of tuples currently on this level
     uint _files_per_run; // This is not necessary since we keep in the Parameters struct the tuple size and the sst size.
     // More specifically this can be calculated as files_per_run = level0_max_tuples * pow(size_ratio, level_id) / _sst_size

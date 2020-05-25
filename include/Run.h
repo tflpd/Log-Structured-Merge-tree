@@ -10,7 +10,6 @@
 #include "Buffer.h"
 #include "BloomFilter.h"
 #include "Tuple.h"
-#include "Parameters.h"
 #include "Args.h"
 #include <vector>
 
@@ -29,7 +28,6 @@ public:
 
     ~FileMetaData();
 
-    //void flush();
     vector<Tuple*> GetAllTuples();
     FILE *getFilePointer() const;
     // Those two functions are symmetric to the constructors - they are just to be used to modify
@@ -73,9 +71,8 @@ private:
 
 class Run {
 public:
-    // Run(uint f, vector<Tuple*>& tuples, int lv_id, int run_id);
     Run(uint files_per_run, vector<Tuple*>& tuples, int level_id, int run_id);
-    ~Run(); // release resources held by FileMetaData?
+    ~Run();
 
     void GenerateFileName(char* name, int level_id, int run_id);
 
@@ -91,7 +88,6 @@ public:
     bool DeleteFMD(); // shouldn't put on deconstructor as deconstructor will be called once after program ends
     bool Scan(const Range& userAskedRange, Range& searchRange, 
         std::vector<Tuple*>& ret, std::vector<bool>& checkbits);
-    //int getTupleOffset(const char *key);
 
 private:
     std::vector<FileMetaData*> _files; // can be optimized to pre-defined sized array
